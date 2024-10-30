@@ -1,29 +1,29 @@
 package edu.ntnu.idi.idatt;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Grocery {
-  // objektvariabler som danner rammeverket for Grocery-klassen og dens innhold
+  // Instance variables that form the framework for the Grocery class and its content
   private final String name;
   private Double amount;
-  private final int price;
+  private final double price;
   private String unit;
-  public Date expiryDate;
+  public LocalDate expiryDate;
 
-  // Klassekonstruktør for Grocery-klassen
-  public Grocery (String name, Double amount, int price, String unit, Date expiryDate) throws IllegalArgumentException{
+  // Constructor for the Grocery class
+  public Grocery(String name, double price, double amount, String unit, LocalDate expiryDate) throws IllegalArgumentException {
     if (price < 0 || amount < 0) {
-      throw new IllegalArgumentException("kan ikke ha negativ pris/mengde, sett inn andre verdier");
+      throw new IllegalArgumentException("Price/amount can NOT be a negative value");
     }
-
     this.name = name;
-    this.amount = amount;
     this.price = price;
+    this.amount = amount;
     this.unit = unit;
     this.expiryDate = expiryDate;
   }
 
-  // GET-metoder -------------------------
+  // GET methods -------------------------
   public String getName() {
     return name;
   }
@@ -32,7 +32,7 @@ public class Grocery {
     return amount;
   }
 
-  public int getPrice() {
+  public double getPrice() {
     return price;
   }
 
@@ -40,20 +40,41 @@ public class Grocery {
     return unit;
   }
 
-  public Date getExpiryDate() {
+  public LocalDate getExpiryDate() {
     return expiryDate;
   }
 
-
-  //Overrider tostring metoden for å skrive den ut på ønsket måte
-  @Override
-  public String toString() {
-    SimpleDateFormat dateFormat = new SimpleDateFormat();
-    return this.name + ", " + this.price + ", " + this.unit + ", " + dateFormat.format(expiryDate);
+  public Boolean isExpired() {
+    LocalDate currentDate = LocalDate.now(); // Gets the current date
+    return currentDate.isAfter(expiryDate); // Returns true if expired
   }
 
+  // Handles increasing and decreasing the amount, unsure if ill keep it like this, possibly better solution
+  public void increaseAmount(double amount) {
+    if (amount < 0) {
+      throw new IllegalArgumentException("Please enter a valid number (not negative)"); // Invalid input for negative increase
+    }
+    this.amount += amount; // Adds to the new amount
+  }
 
+  public void decreaseAmount(double amount) {
+    if (amount < 0) {
+      throw new IllegalArgumentException("Please enter a valid number (not negative)"); // Invalid input for positive decrease
+    }
+    this.amount -= amount; // Decreases the amount
+  }
 
+  public double totalValueOfGrocery() {
+    double totalValue = this.price * this.amount; // Total value in currency of the grocery
+    return totalValue;
+  }
 
+  //REMEMBER TO ADD A METHOD FOR CALCULATING WITH DIFFERENT SI-UNITS!!!!
 
+  // Overrides the toString method to print it in the desired format
+  @Override
+  public String toString() {
+    DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    return this.name + ", " + this.price + "kr, " + this.amount + " " + this.unit + ", " + dateFormat.format(expiryDate);
+  }
 }
