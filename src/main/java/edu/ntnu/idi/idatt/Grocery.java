@@ -4,12 +4,20 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Grocery {
-  // Instance variables that form the framework for the Grocery class and its content
   private final String name;
   private Double amount;
   private final double price;
   private String unit;
   public LocalDate expiryDate;
+
+  /**
+   * objectvariables of the grocery constructor
+   * @param name
+   * @param price
+   * @param amount
+   * @param unit
+   * @param expiryDate
+   * */
 
   // Constructor for the Grocery class
   public Grocery(String name, double price, double amount, String unit, LocalDate expiryDate) throws IllegalArgumentException {
