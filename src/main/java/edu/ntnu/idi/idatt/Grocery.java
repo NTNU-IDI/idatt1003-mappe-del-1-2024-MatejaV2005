@@ -11,7 +11,7 @@ public class Grocery {
   public LocalDate expiryDate;
 
   /**
-   * objectvariables of the grocery constructor
+   * objectvariables of the grocery constructor with following parametres
    * @param name
    * @param price
    * @param amount
