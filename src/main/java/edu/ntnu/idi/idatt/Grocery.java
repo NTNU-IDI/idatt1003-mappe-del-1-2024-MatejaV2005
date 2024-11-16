@@ -6,26 +6,27 @@ import java.time.format.DateTimeFormatter;
 public class Grocery {
   private final String name;
   private Double amount;
-  private final double price;
-  private String unit;
-  public LocalDate expiryDate;
+  private final double pricePerUnit;
+  private final String unit;
+  public final LocalDate expiryDate;
 
   /**
    * objectvariables of the grocery constructor with following parametres
    * @param name
-   * @param price
+   * @param pricePerUnit
    * @param amount
    * @param unit
    * @param expiryDate
    * */
 
   // Constructor for the Grocery class
-  public Grocery(String name, double price, double amount, String unit, LocalDate expiryDate) throws IllegalArgumentException {
-    if (price < 0 || amount < 0) {
+  public Grocery(String name, double pricePerUnit, double amount, String unit, LocalDate expiryDate) throws IllegalArgumentException {
+    if (pricePerUnit < 0 || amount < 0) {
       throw new IllegalArgumentException("Price/amount can NOT be a negative value");
     }
+    //NOT SUPPOSED TO HAVE A THROW AS A INPUTVALIDATOR BUT RATHER JUST FOR TESTING IN THIS CASE
     this.name = name;
-    this.price = price;
+    this.pricePerUnit = pricePerUnit;
     this.amount = amount;
     this.unit = unit;
     this.expiryDate = expiryDate;
@@ -41,7 +42,7 @@ public class Grocery {
   }
 
   public double getPrice() {
-    return price;
+    return pricePerUnit;
   }
 
   public String getUnit() {
@@ -51,6 +52,12 @@ public class Grocery {
   public LocalDate getExpiryDate() {
     return expiryDate;
   }
+
+  //SET-METHODS-----------------------------------------------------
+  public void setAmount(double amount) {
+    this.amount = amount;
+  }
+
 
   public Boolean isExpired() {
     LocalDate currentDate = LocalDate.now(); // Gets the current date
@@ -73,7 +80,7 @@ public class Grocery {
   }
 
   public double totalValueOfGrocery() {
-    double totalValue = this.price * this.amount; // Total value in currency of the grocery
+    double totalValue = this.pricePerUnit * this.amount; // Total value in currency of the grocery
     return totalValue;
   }
 
@@ -83,6 +90,6 @@ public class Grocery {
   @Override
   public String toString() {
     DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    return this.name + ", " + this.price + "kr, " + this.amount + " " + this.unit + ", " + dateFormat.format(expiryDate);
+    return this.name + ", " + this.pricePerUnit + "kr, " + this.amount + " " + this.unit + ", " + dateFormat.format(expiryDate);
   }
 }
