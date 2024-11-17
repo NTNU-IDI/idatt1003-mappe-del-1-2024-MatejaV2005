@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -20,12 +21,15 @@ public class FoodStorage {
     }
 
   /**
-   * adds a grocery to storage based on name
+   * adds a grocery to storage based on name, if already in storage; increases amount
    * @param groceryToAdd name of grocery to be added to storage
    */
     public void registerToStorage(Grocery groceryToAdd) {
       storage.computeIfAbsent(groceryToAdd.getName(), toList -> new ArrayList<>()).add(groceryToAdd);
-      //REMEMBER: add code so that if user adds same grocery, the amount for that grocery increases
+
+      // sorts the grocery items in each corresponding list by the earlist date to expiry
+      storage.get(groceryToAdd.getName())
+          .sort(Comparator.comparing(Grocery::getExpiryDate));
 
       storage.values().stream()
           .flatMap(List::stream)
@@ -48,13 +52,23 @@ public class FoodStorage {
       List<Grocery> items = storage.get(groceryToRemove.getName()); //Get only the values in storage for the parameter GroceryToRemove
       Iterator<Grocery> it = items.iterator();
 
+      while (it.hasNext() && groceryToRemove.getAmount() > amount) {
+        Grocery item = it.next();
+        item.decreaseAmount(amount);
+        if (items.isEmpty()) {
+          storage.remove(groceryToRemove.getName());
+        }
+      }
+    }
+
+      /*
       if (items != null) {
         items.remove(groceryToRemove); //removes specific instance of parameter
         if (items.isEmpty()) { // if list is empty, remove key
           storage.remove(groceryToRemove.getName());
         }
       }
-    }
+    } */
 
     //REMEMBER SORT STORAGE METHOD
     public Map<String, List<Grocery>> sortGroceries() {
@@ -89,6 +103,10 @@ public class FoodStorage {
     }
 
   //get total value
+
+  public void expirySoon {
+    //TODO: add a method here;
+  }
   //REMEMBER THESE METHODS!!!!!!!!!!!!!!!!!!!!!
 
     public HashMap<String, List<Grocery>> getGroceryList() {
