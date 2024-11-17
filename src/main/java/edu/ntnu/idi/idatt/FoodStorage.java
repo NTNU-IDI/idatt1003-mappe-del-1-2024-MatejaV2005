@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,33 +45,38 @@ public class FoodStorage {
   /**
    * Removes a grocery from storage based on name
    * @param groceryToRemove name of grocery to be removed
+   * @param amount the amount to be removed
    */
 
   //REMEMBER THIS LOGIC. YOU WILL WANT TO USE ITERATOR!!!! THIS IS BECAUSE: if you sort the values of f.ex milk after soonest coming expiryDate, you will naturally want to remove the amount first for the one with soonest coming expiryDate
   //You will also want it to iterate to the next value IF you remove more than what is present int the first milk
     public void removeAmountFromStorage(Grocery groceryToRemove, double amount) {
-      List<Grocery> items = storage.get(groceryToRemove.getName()); //Get only the values in storage for the parameter GroceryToRemove
-      Iterator<Grocery> it = items.iterator();
+      List<Grocery> itemsToRemove = storage.get(
+          groceryToRemove.getName()); //Get only the values in storage for the parameter GroceryToRemove
+      Iterator<Grocery> it = itemsToRemove.iterator();
 
       while (it.hasNext() && groceryToRemove.getAmount() > amount) {
         Grocery item = it.next();
-        item.decreaseAmount(amount);
-        if (items.isEmpty()) {
-          storage.remove(groceryToRemove.getName());
+        double currentAmount = item.getAmount();
+
+        if (currentAmount <= amount) {
+          amount -= currentAmount;
+          it.remove();
+        } else {
+          item.setAmount(currentAmount - amount);
+          amount = 0;
         }
+      }
+
+      if (itemsToRemove.isEmpty()) {
+        storage.remove(groceryToRemove.getName());
+        System.out.println("nothing to remove, you are out of: " + groceryToRemove.getName());
       }
     }
 
-      /*
-      if (items != null) {
-        items.remove(groceryToRemove); //removes specific instance of parameter
-        if (items.isEmpty()) { // if list is empty, remove key
-          storage.remove(groceryToRemove.getName());
-        }
-      }
-    } */
 
-    //REMEMBER SORT STORAGE METHOD
+
+    //REMEMBER SORT STORAGE METHOD, AND DOCUMENTATION OF TREEMAP
     public Map<String, List<Grocery>> sortGroceries() {
       Map<String, List<Grocery>> SortedMap = new TreeMap<>();
 
@@ -94,26 +100,41 @@ public class FoodStorage {
     }
 
     public List<Grocery> bestBefore(LocalDate date) {
-      List<Grocery> expiredGroceries = storage.values().stream()
+      return storage.values().stream()
           .flatMap(List::stream)
           .filter(bestBefore -> bestBefore.getExpiryDate().isBefore(date))
           .toList();
-
-      return expiredGroceries;
     }
 
   //get total value
 
   public void expirySoon {
     //TODO: add a method here;
+    System.out.println("temp");
   }
   //REMEMBER THESE METHODS!!!!!!!!!!!!!!!!!!!!!
 
-    public HashMap<String, List<Grocery>> getGroceryList() {
-      // use java streams here, ex. ForEach to print out each
-      // Should i have a print method here? potentially have a toString but not a print Method
-      return null;
+  @Override
+  public String toString() {
+    DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    StringBuilder sb = new StringBuilder();
+
+    for (Map.Entry<String, List<Grocery>> entry : storage.entrySet()) {
+      String groceryName = entry.getKey();
+      List<Grocery> groceryList = entry.getValue();
+
+      sb.append(groceryName.toUpperCase()).append(":\n");
+      sb.append(String.format("%-20s %-8s %-15s\n", "Name", "Amount", "Expiry Date"));
+      sb.append("-------------------------------------------------\n");
+
+      for (Grocery grocery : groceryList) {
+        sb.append(String.format("%-20s %-8.2f %-15s\n", grocery.getName(), grocery.getAmount(), dateFormat.format(grocery.getExpiryDate())));
+      }
+      sb.append("\n");
     }
+
+    return sb.toString();
+  }
 }
 
 //
