@@ -9,17 +9,12 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
+
 
 
 public class FoodStorage {
-  private Map<String, List<Grocery>> storage; /*a hashmap with a String key and a List (defined as list for flecibilty) as values                                           The idea here is that if the user adds for instance milks with different expiry dates, but both have the Key milk, they won't override eachother*/
-  private double TotalValue;
+  private Map<String, List<Grocery>> storage = new HashMap<>(); /*a hashmap with a String key and a List (defined as list for flecibilty) as values                                           The idea here is that if the user adds for instance milks with different expiry dates, but both have the Key milk, they won't override eachother*/
 
-  public FoodStorage() {
-      this.storage = new HashMap<>();
-      this.TotalValue = 0.0;
-    }
 
   /**
    * adds a grocery to storage based on name, if already in storage; increases amount
@@ -51,19 +46,19 @@ public class FoodStorage {
   //REMEMBER THIS LOGIC. YOU WILL WANT TO USE ITERATOR!!!! THIS IS BECAUSE: if you sort the values of f.ex milk after soonest coming expiryDate, you will naturally want to remove the amount first for the one with soonest coming expiryDate
   //You will also want it to iterate to the next value IF you remove more than what is present int the first milk
     public void removeAmountFromStorage(Grocery groceryToRemove, double amount) {
-      List<Grocery> itemsToRemove = storage.get(
-          groceryToRemove.getName()); //Get only the values in storage for the parameter GroceryToRemove
+      List<Grocery> itemsToRemove = storage.get(groceryToRemove.getName()); //Get only the values in storage for the parameter GroceryToRemove
       Iterator<Grocery> it = itemsToRemove.iterator();
 
-      while (it.hasNext() && groceryToRemove.getAmount() > amount) {
+      while (it.hasNext() && amount > 0) {
         Grocery item = it.next();
         double currentAmount = item.getAmount();
 
         if (currentAmount <= amount) {
           amount -= currentAmount;
           it.remove();
-        } else {
-          item.setAmount(currentAmount - amount);
+        }
+        else {
+          item.decreaseAmount(amount);
           amount = 0;
         }
       }
@@ -73,7 +68,6 @@ public class FoodStorage {
         System.out.println("nothing to remove, you are out of: " + groceryToRemove.getName());
       }
     }
-
 
 
     //REMEMBER SORT STORAGE METHOD, AND DOCUMENTATION OF TREEMAP
@@ -106,13 +100,17 @@ public class FoodStorage {
           .toList();
     }
 
-  //get total value
+    public double TotalValueOfGroceries() {
+      return storage.values().stream()
+          .flatMap(List::stream)
+          .mapToDouble(Grocery::totalValueOfGrocery)
+          .sum();
+    }
 
-  public void expirySoon {
+   //public void expirySoon {
     //TODO: add a method here;
-    System.out.println("temp");
-  }
-  //REMEMBER THESE METHODS!!!!!!!!!!!!!!!!!!!!!
+
+
 
   @Override
   public String toString() {
