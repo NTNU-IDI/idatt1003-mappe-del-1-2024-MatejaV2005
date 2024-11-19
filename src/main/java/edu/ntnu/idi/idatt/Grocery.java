@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt;
 
+import edu.ntnu.idi.idatt.Utils.UnitConverter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -21,15 +22,18 @@ public class Grocery {
 
   // Constructor for the Grocery class
   public Grocery(String name, double pricePerUnit, double amount, String unit, LocalDate expiryDate) throws IllegalArgumentException {
-    if (pricePerUnit < 0 || amount < 0) {
+    if (name == null || name.trim().isEmpty()) {
+      throw new IllegalArgumentException("Price/amount can NOT be a negative value");
+    }
+    if (pricePerUnit <= 0 || amount < 0) {
       throw new IllegalArgumentException("Price/amount can NOT be a negative value");
     }
     //ADD MORE EXPCETION HANDLING
     //NOT SUPPOSED TO HAVE A THROW AS A INPUTVALIDATOR BUT RATHER JUST FOR TESTING IN THIS CASE
     this.name = name;
     this.pricePerUnit = pricePerUnit;
-    this.amount = amount;
     this.unit = unit;
+    this.amount = UnitConverter.convertToStandardUnit(amount, unit);
     this.expiryDate = expiryDate;
   }
 
@@ -84,28 +88,6 @@ public class Grocery {
     double totalValue = this.pricePerUnit * this.amount; // Total value in currency of the grocery
     return totalValue;
   }
-
-  //REMEMBER TO ADD A METHOD FOR CALCULATING WITH DIFFERENT SI-UNITS!!!!
-  public double unitConverter(String unit) {
-    switch (unit.toLowerCase()) {
-      // Flytende enheter
-      case "ml":
-        return this.amount = amount / 1000; // Konverterer milliliter til liter
-      case "dl":
-        return this.amount = amount / 10;   // Konverterer desiliter til liter
-
-
-      // Tørre enheter
-      case "mg":
-        return this.amount = amount / 1_000_000; // Konverterer milligram til kilogram
-      case "g":
-        return this.amount = amount / 1000;      // Konverterer gram til kilogram
-
-      default:
-        throw new IllegalArgumentException("Unsupported unit: " + unit);
-    }
-  }
-
 
   // Overrides the toString method to print it in the desired format
   @Override
