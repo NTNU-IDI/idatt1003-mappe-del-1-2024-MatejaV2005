@@ -3,7 +3,6 @@ package edu.ntnu.idi.idatt.Interface;
 import edu.ntnu.idi.idatt.FoodStorage;
 import edu.ntnu.idi.idatt.Grocery;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -32,15 +31,15 @@ public class GroceryUI {
    *         If 0 is returned, the user has entered an invalid value.
    */
   private int showMenu() {
-    System.out.println("\n***** Property Register Application v0.1 *****\n");
-    System.out.println("1. Add property");
-    System.out.println("2. List all properties");
-    System.out.println("3. Find property by ID");
-    System.out.println("4. List properties by farm number");
-    System.out.println("5. Calculate average area");
-    System.out.println("6. Delete property");
-    System.out.println("7. Show total number of properties");
-    System.out.println("9. Quit");
+    System.out.println("\n***** FOODWASTE APPLICTAION VERSION 0.1 *****\n");
+    System.out.println("1. Add grocery");
+    System.out.println("2. Remove grocery");
+    System.out.println("3. Return a sorted storage (Alphabetically)");
+    System.out.println("4. Find grocery in storage");
+    System.out.println("5. Return groceries with best-before date before a given expiry date");
+    System.out.println("6. return total value of ALL groceries in storage");
+    System.out.println("7. List all groceries");
+    System.out.println("0. Quit");
     System.out.println("\nPlease enter a number between 1 and 9.\n");
 
     int menuChoice = 0;
@@ -55,9 +54,38 @@ public class GroceryUI {
 
 
   public void start() {
-    boolean running = true;
+    boolean finished = false;
     init();
+    //	The	while-loop	will	run	as	long	as	the	user	has	not	selected
+    //	to	quit	the	application
+    while (!finished) {
+      int menuChoice = this.showMenu();
+      switch (menuChoice) {
+        case ADD_GROCERY:
+          //TODO
 
+        case REMOVE_GROCERY:
+          //TODO
+
+        case GROCERIES_SORTED:
+          //TODO
+
+        case FIND_GROCERY_IN_STORAGE:
+          //TODO
+
+        case BEST_BEFORE_EXPIRY_DATE:
+          //TODO
+
+        case TOTAL_VALUE_OF_GROCERIES_IN_STORAGE:
+          //TODO
+
+        case LIST_ALL_GROCERIES:
+          System.out.println(storage);
+
+        case EXIT:
+          //TODO
+      }
+    }
   }
 
   public void init() {
