@@ -72,9 +72,9 @@ public class FoodStorage {
 
     //REMEMBER SORT STORAGE METHOD, AND DOCUMENTATION OF TREEMAP (WHY USE TREEMAP? WHY BETTER THAN
     public Map<String, List<Grocery>> sortGroceries() {
-      Map<String, List<Grocery>> SortedMap = new TreeMap<>();
-      SortedMap.putAll(storage);
-      return SortedMap;
+      Map<String, List<Grocery>> sortedMap = new TreeMap<>();
+      sortedMap.putAll(storage);
+      return sortedMap;
     }
 
   /**
