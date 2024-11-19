@@ -24,6 +24,7 @@ public class Grocery {
     if (pricePerUnit < 0 || amount < 0) {
       throw new IllegalArgumentException("Price/amount can NOT be a negative value");
     }
+    //ADD MORE EXPCETION HANDLING
     //NOT SUPPOSED TO HAVE A THROW AS A INPUTVALIDATOR BUT RATHER JUST FOR TESTING IN THIS CASE
     this.name = name;
     this.pricePerUnit = pricePerUnit;
@@ -85,6 +86,26 @@ public class Grocery {
   }
 
   //REMEMBER TO ADD A METHOD FOR CALCULATING WITH DIFFERENT SI-UNITS!!!!
+  public double unitConverter(String unit) {
+    switch (unit.toLowerCase()) {
+      // Flytende enheter
+      case "ml":
+        return this.amount = amount / 1000; // Konverterer milliliter til liter
+      case "dl":
+        return this.amount = amount / 10;   // Konverterer desiliter til liter
+
+
+      // Tørre enheter
+      case "mg":
+        return this.amount = amount / 1_000_000; // Konverterer milligram til kilogram
+      case "g":
+        return this.amount = amount / 1000;      // Konverterer gram til kilogram
+
+      default:
+        throw new IllegalArgumentException("Unsupported unit: " + unit);
+    }
+  }
+
 
   // Overrides the toString method to print it in the desired format
   @Override
