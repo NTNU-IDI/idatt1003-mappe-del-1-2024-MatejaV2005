@@ -70,14 +70,10 @@ public class FoodStorage {
     }
 
 
-    //REMEMBER SORT STORAGE METHOD, AND DOCUMENTATION OF TREEMAP
+    //REMEMBER SORT STORAGE METHOD, AND DOCUMENTATION OF TREEMAP (WHY USE TREEMAP? WHY BETTER THAN
     public Map<String, List<Grocery>> sortGroceries() {
       Map<String, List<Grocery>> SortedMap = new TreeMap<>();
-
-      for (String key : storage.keySet()) {
-        List<Grocery> items = storage.get(key);
-        SortedMap.put(key, items);
-      }
+      SortedMap.putAll(storage);
       return SortedMap;
     }
 
@@ -122,12 +118,13 @@ public class FoodStorage {
       List<Grocery> groceryList = entry.getValue();
 
       sb.append(groceryName.toUpperCase()).append(":\n");
-      sb.append(String.format("%-20s %-8s %-15s\n", "Name", "Amount", "Expiry Date"));
-      sb.append("-------------------------------------------------\n");
+      sb.append(String.format("%-20s %-17s %-1s\n", "Name", "Amount", "Expiry Date"));
+      sb.append("---------------------------------------------------\n");
 
       for (Grocery grocery : groceryList) {
-        sb.append(String.format("%-20s %-8.2f %-15s\n", grocery.getName(), grocery.getAmount(), dateFormat.format(grocery.getExpiryDate())));
+        sb.append(String.format("%-20s %.2f %-12s %-1s\n", grocery.getName(), grocery.getAmount(), grocery.getUnit(), dateFormat.format(grocery.getExpiryDate())));
       }
+      sb.append("---------------------------------------------------\n");
       sb.append("\n");
     }
 
