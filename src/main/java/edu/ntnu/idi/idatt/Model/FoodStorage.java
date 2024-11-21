@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt;
+package edu.ntnu.idi.idatt.Model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -145,7 +145,7 @@ public class FoodStorage {
   }
 
   //REMEMBER TO ADD:
-  //METHOD THAT CALCULATES ALL THE EXPIRED GROCERIES AND ADDS IT TO AN EXPIRED LIST/MAP
+  //METHOD THAT FINDS ALL THE EXPIRED GROCERIES AND ADDS IT TO AN EXPIRED LIST/MAP
   //CALCULATES THE TOTAL VALUE OF THE GROCERIES IN THE EXPIRED LIST/MAP
 
   /**
@@ -180,5 +180,9 @@ public class FoodStorage {
     }
 
     return sb.toString();
+  }
+
+  public void hsvghfija() {
+
   }
 }

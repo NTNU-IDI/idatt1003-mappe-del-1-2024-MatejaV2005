@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt;
+package edu.ntnu.idi.idatt.Model;
 
 import edu.ntnu.idi.idatt.Utils.UnitConverter;
 import java.time.LocalDate;
@@ -6,8 +6,8 @@ import java.time.format.DateTimeFormatter;
 
 public class Grocery {
   private final String name;
-  private Double amount;
-  private final double pricePerUnit;
+  private double amount;
+  private double pricePerUnit;
   private final String unit;
   public final LocalDate expiryDate;
 
@@ -23,11 +23,21 @@ public class Grocery {
   // Constructor for the Grocery class
   public Grocery(String name, double pricePerUnit, double amount, String unit, LocalDate expiryDate) throws IllegalArgumentException {
     if (name == null || name.trim().isEmpty()) {
-      throw new IllegalArgumentException("Price/amount can NOT be a negative value");
+      throw new IllegalArgumentException("Unit can NOT be a null or empty value");
     }
-    if (pricePerUnit <= 0 || amount < 0) {
-      throw new IllegalArgumentException("Price/amount can NOT be a negative value");
+    if (pricePerUnit <= 0) {
+      throw new IllegalArgumentException("Price can NOT be a negative value");
     }
+    if (amount <= 0) {
+      throw new IllegalArgumentException("Amount can NOT be a negative value");
+    }
+    if (unit == null || unit.trim().isEmpty()) {
+      System.out.println("Unit can NOT be a null or empty value");
+    }
+    if (expiryDate == null || expiryDate.isBefore(LocalDate.now())) {
+      throw new IllegalArgumentException("Expiry date can NOT be null or set before the current date");
+    }
+
     //ADD MORE EXPCETION HANDLING
     //NOT SUPPOSED TO HAVE A THROW AS A INPUTVALIDATOR BUT RATHER JUST FOR TESTING IN THIS CASE
     this.name = name;
@@ -63,6 +73,10 @@ public class Grocery {
     this.amount = amount;
   }
 
+  public void setPrice(double pricePerUnit) {
+    this.pricePerUnit = pricePerUnit;
+  }
+
 
   public Boolean isExpired() {
     LocalDate currentDate = LocalDate.now(); // Gets the current date
@@ -78,11 +92,15 @@ public class Grocery {
   }
 
   public void decreaseAmount(double amount) {
-    if (amount < 0) {
-      throw new IllegalArgumentException("Please enter a valid number (not negative)"); // Invalid input for positive decrease
+    if (amount <= 0) {
+      throw new IllegalArgumentException("Decrease amount must be greater than 0.");
     }
-    this.amount -= amount; // Decreases the amount
+    if (amount > this.amount) {
+      throw new IllegalArgumentException("Cannot decrease by more than the current amount.");
+    }
+    this.amount -= amount;
   }
+
 
   public double totalValueOfGrocery() {
     double totalValue = this.pricePerUnit * this.amount; // Total value in currency of the grocery
