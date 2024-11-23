@@ -1,8 +1,9 @@
 package edu.ntnu.idi.idatt.Utils;
 
+import edu.ntnu.idi.idatt.Model.Grocery;
 import java.time.LocalDate;
 
-public class Utils {
+public class ExceptionHandling {
   ////
   public static void validateName(String name) {
     if (name == null || name.trim().isEmpty()) {
@@ -35,6 +36,23 @@ public class Utils {
 
     if (expiryDate.isBefore(LocalDate.now())) {
       throw new IllegalArgumentException("Expiry date cannot be before the current date.");
+    }
+  }
+
+
+  public static void validateAmountIncrease(double amountIncrease) {
+    if (amountIncrease <= 0) {
+      throw new IllegalArgumentException("Amount to increase with must be greater than 0.");
+    }
+  }
+
+  public static void validateAmountDecrease(Grocery grocery, double amountDecrease) {
+    if (amountDecrease <= 0) {
+      throw new IllegalArgumentException("Amount to decrease with must be greater than 0.");
+    }
+
+    if (amountDecrease > grocery.getAmount()) {
+      throw new IllegalArgumentException("Amount to decrease cannot be greater than the current amount.");
     }
   }
 

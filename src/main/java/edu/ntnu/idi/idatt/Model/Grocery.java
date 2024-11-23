@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.Model;
 
 import edu.ntnu.idi.idatt.Utils.UnitConverter;
+import edu.ntnu.idi.idatt.Utils.ExceptionHandling;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -22,27 +23,18 @@ public class Grocery {
 
   // Constructor for the Grocery class
   public Grocery(String name, double pricePerUnit, double amount, String unit, LocalDate expiryDate) throws IllegalArgumentException {
-    if (name == null || name.trim().isEmpty()) {
-      throw new IllegalArgumentException("Unit can NOT be a null or empty value");
-    }
-    if (pricePerUnit <= 0) {
-      throw new IllegalArgumentException("Price can NOT be a negative value");
-    }
-    if (amount <= 0) {
-      throw new IllegalArgumentException("Amount can NOT be a negative value");
-    }
-    if (unit == null || unit.trim().isEmpty()) {
-      System.out.println("Unit can NOT be a null or empty value");
-    }
-    if (expiryDate == null || expiryDate.isBefore(LocalDate.now())) {
-      throw new IllegalArgumentException("Expiry date can NOT be null or set before the current date");
-    }
+    ExceptionHandling.validateName(name);
+    ExceptionHandling.validatePrice(pricePerUnit);
+    ExceptionHandling.validateAmount(amount);
+    ExceptionHandling.validateUnit(unit);
+    ExceptionHandling.validateExpiryDate(expiryDate);
 
     //ADD MORE EXPCETION HANDLING
     //NOT SUPPOSED TO HAVE A THROW AS A INPUTVALIDATOR BUT RATHER JUST FOR TESTING IN THIS CASE
     this.name = name;
     this.pricePerUnit = pricePerUnit;
     this.unit = unit;
+    //HUSK Å BRUKE SET METODER HER!!!!!! IFØLGE VURDERINGSKRITERENE (SENSORVEILEDNING)
     this.amount = UnitConverter.convertToStandardUnit(amount, unit);
     this.expiryDate = expiryDate;
   }
@@ -70,10 +62,12 @@ public class Grocery {
 
   //SET-METHODS-----------------------------------------------------
   public void setAmount(double amount) {
+    ExceptionHandling.validateAmount(amount);
     this.amount = amount;
   }
 
   public void setPrice(double pricePerUnit) {
+    ExceptionHandling.validatePrice(pricePerUnit);
     this.pricePerUnit = pricePerUnit;
   }
 
@@ -83,29 +77,17 @@ public class Grocery {
     return currentDate.isAfter(expiryDate); // Returns true if expired
   }
 
-  // Handles increasing and decreasing the amount, unsure if ill keep it like this, possibly better solution
+  // STILL UNSURE IF IM GOING TO KEEP IT LIKE THIS!!! BUT REMEMBER EVENTUALLY IF YOURE GOING TO KEEP IT LIKE THIS TO ARGUMENT WHY, USE THIS INSTEAD OF SET METHODS!!!
   public void increaseAmount(double amount) {
-    if (amount < 0) {
-      throw new IllegalArgumentException("Please enter a valid number (not negative)"); // Invalid input for negative increase
-    }
+    ExceptionHandling.validateAmountIncrease(amount);
     this.amount += amount; // Adds to the new amount
   }
 
   public void decreaseAmount(double amount) {
-    if (amount <= 0) {
-      throw new IllegalArgumentException("Decrease amount must be greater than 0.");
-    }
-    if (amount > this.amount) {
-      throw new IllegalArgumentException("Cannot decrease by more than the current amount.");
-    }
+    ExceptionHandling.validateAmountDecrease(this, amount);
     this.amount -= amount;
   }
 
-
-  public double totalValueOfGrocery() {
-    double totalValue = this.pricePerUnit * this.amount; // Total value in currency of the grocery
-    return totalValue;
-  }
 
   // Overrides the toString method to print it in the desired format
   @Override
