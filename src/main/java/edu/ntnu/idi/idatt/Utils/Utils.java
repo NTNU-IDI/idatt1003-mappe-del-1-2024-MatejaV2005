@@ -32,6 +32,7 @@ public class Utils {
     if (expiryDate == null) {
       throw new IllegalArgumentException("Expiry date cannot be null.");
     }
+
     if (expiryDate.isBefore(LocalDate.now())) {
       throw new IllegalArgumentException("Expiry date cannot be before the current date.");
     }
