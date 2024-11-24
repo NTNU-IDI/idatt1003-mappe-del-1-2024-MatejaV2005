@@ -32,10 +32,10 @@ public class Grocery {
     //ADD MORE EXPCETION HANDLING
     //NOT SUPPOSED TO HAVE A THROW AS A INPUTVALIDATOR BUT RATHER JUST FOR TESTING IN THIS CASE
     this.name = name;
-    this.pricePerUnit = pricePerUnit;
+    setPrice(pricePerUnit);
     this.unit = unit;
     //HUSK Å BRUKE SET METODER HER!!!!!! IFØLGE VURDERINGSKRITERENE (SENSORVEILEDNING)
-    this.amount = UnitConverter.convertToStandardUnit(amount, unit);
+    setAmount(amount);
     this.expiryDate = expiryDate;
   }
 
@@ -60,10 +60,10 @@ public class Grocery {
     return expiryDate;
   }
 
-  //SET-METHODS-----------------------------------------------------
+  //SET-METHODS----------------------------------------------------- (REMEMBER TO TEST???)
   public void setAmount(double amount) {
     ExceptionHandling.validateAmount(amount);
-    this.amount = amount;
+    this.amount = UnitConverter.convertToStandardUnit(amount, unit);;
   }
 
   public void setPrice(double pricePerUnit) {
@@ -86,6 +86,11 @@ public class Grocery {
   public void decreaseAmount(double amount) {
     ExceptionHandling.validateAmountDecrease(this, amount);
     this.amount -= amount;
+  }
+
+  public double totalPriceOfGrocery() {
+    ExceptionHandling.validateTotalPrice(amount, pricePerUnit);
+    return amount * pricePerUnit;
   }
 
 
