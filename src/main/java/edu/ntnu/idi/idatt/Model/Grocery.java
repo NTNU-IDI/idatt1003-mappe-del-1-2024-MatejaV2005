@@ -22,7 +22,7 @@ public class Grocery {
    * */
 
   // Constructor for the Grocery class
-  public Grocery(String name, double pricePerUnit, double amount, String unit, LocalDate expiryDate) throws IllegalArgumentException {
+  public Grocery(String name, double pricePerUnit, double amount, String unit, LocalDate expiryDate) {
     ExceptionHandling.validateName(name);
     ExceptionHandling.validatePrice(pricePerUnit);
     ExceptionHandling.validateAmount(amount);
