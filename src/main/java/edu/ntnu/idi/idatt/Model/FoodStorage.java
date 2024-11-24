@@ -133,18 +133,32 @@ public class FoodStorage {
   }
 
   /**
-   * Calculates the total value of all groceries in storage.
+   * Computes the total monetary value of all groceries stored.
    *
-   * @return the total value of all groceries
+   * <p>This method processes all grocery items within the `storage` map, which organizes
+   * groceries into lists. The total value is calculated by summing the results of
+   * {@link Grocery#totalPriceOfGrocery()} for each grocery item. If the storage is empty,
+   * the method returns {@code 0.0}.</p>
+   *
+   * @return the total value of all groceries as a {@code double}.
    */
   public double TotalValueOfGroceries() {
     return storage.values().stream()
         .flatMap(List::stream)
-        .mapToDouble(Grocery::totalValueOfGrocery)
+        .mapToDouble(Grocery::totalPriceOfGrocery)
         .sum();
   }
 
   //REMEMBER TO ADD:
+
+  public double TotalValueOfExpiredGroceries() {
+    return storage.values().stream()
+        .flatMap(List::stream)
+        .filter(exp_g -> exp_g.isExpired())
+        .mapToDouble(Grocery::totalPriceOfGrocery)
+        .sum();
+  }
+
   //METHOD THAT FINDS ALL THE EXPIRED GROCERIES AND ADDS IT TO AN EXPIRED LIST/MAP
   //CALCULATES THE TOTAL VALUE OF THE GROCERIES IN THE EXPIRED LIST/MAP
 
@@ -180,9 +194,5 @@ public class FoodStorage {
     }
 
     return sb.toString();
-  }
-
-  public void hsvghfija() {
-
   }
 }
