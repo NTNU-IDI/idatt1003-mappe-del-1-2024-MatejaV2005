@@ -39,7 +39,7 @@ public class FoodStorage {
   public void registerToStorage(Grocery groceryToAdd) {
     // Ensure that the list of groceries for the given name exists.
     // we can use this list locally in the method now to perform operations
-    List<Grocery> groceries = storage.computeIfAbsent(groceryToAdd.getName(), k -> new ArrayList<>());
+    List<Grocery> groceries = storage.computeIfAbsent(groceryToAdd.getName().toLowerCase(), k -> new ArrayList<>());
 
     // Use streams to check if there's an existing grocery item with the same expiry date.
     //todo: Remember to argument in report why you compare by expiry dates
@@ -76,7 +76,7 @@ public class FoodStorage {
       Grocery item = it.next();
       double currentAmount = item.getAmount();
 
-      if (currentAmount <= amount) {
+      if (amount >= currentAmount) {
         amount -= currentAmount;
         it.remove();
       } else {
@@ -87,7 +87,7 @@ public class FoodStorage {
 
     if (itemsToRemove.isEmpty()) {
       storage.remove(groceryToRemove.getName());
-      System.out.println("nothing to remove, you are out of: " + groceryToRemove.getName());
+      System.out.println("you are out of: " + groceryToRemove.getName());
     }
   }
 
@@ -114,18 +114,19 @@ public class FoodStorage {
    * @return the matching grocery if found, or {@code null} if no match exists.
    *         Prints a message if no match is found.
    */
-  public Grocery inStorage(Grocery groceryInStorage) {
-    Grocery foundGrocery = storage.values().stream()
-        .flatMap(List::stream)
-        .filter(inStorage -> inStorage.equals(groceryInStorage))
-        .findFirst()
-        .orElse(null);
+  public List<Grocery> inStorage(String groceryName) {
+    // Get all groceries with the specified name from the storage map.
+    List<Grocery> foundGroceries = storage.getOrDefault(groceryName.toLowerCase(), new ArrayList<>());
 
-    if (foundGrocery == null) {
-      System.out.println("Grocery not found: " + groceryInStorage.getName());
+    if (foundGroceries.isEmpty()) {
+      // Print a message if no groceries are found.
+      System.out.println("Grocery not found: " + groceryName);
+    } else {
+      // Optionally print the groceries if found (this is not mandatory).
+      foundGroceries.forEach(g -> System.out.println(g));
     }
 
-    return foundGrocery;
+    return foundGroceries;
   }
 
   /**
@@ -146,7 +147,7 @@ public class FoodStorage {
    *
    * <p>This method processes all grocery items within the `storage` map, which organizes
    * groceries into lists. The total value is calculated by summing the results of
-   * {@link Grocery#totalPriceOfGrocery()} for each grocery item. If the storage is empty,
+   * {@link Grocery#getPrice()} for each grocery item. If the storage is empty,
    * the method returns {@code 0.0}.</p>
    *
    * @return the total value of all groceries as a {@code double}.
@@ -159,6 +160,10 @@ public class FoodStorage {
   }
 
   //REMEMBER TO ADD:
+
+  public void ExpiredGroceries() {
+
+  }
 
   public double TotalValueOfExpiredGroceries() {
     return storage.values().stream()
