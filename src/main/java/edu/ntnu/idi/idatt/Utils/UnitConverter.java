@@ -9,6 +9,7 @@ public class UnitConverter {
       case "mg": return amount / 1_000_000;
       case "g": return amount / 1000;
       case "l":
+      case "stk":
       case "kg": return amount;
       default: throw new IllegalArgumentException("Unsupported unit: " + unit);
     }
