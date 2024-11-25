@@ -37,15 +37,6 @@ class GroceryTest {
     assertEquals(grocery.toString(), "Ost, 40.0kr, 8.0 kg, 31-12-2024");
   }
 
-  @Test
-  void TestingTotalValueOfGrocery() {
-    Grocery grocery1 = new Grocery("Ost", 20.0, 5.0, "kg", expiryDate);
-    Grocery grocery2 = new Grocery("Ost", 20.0, 0.5, "kg", expiryDate);
-
-    assertEquals(grocery1.totalPriceOfGrocery(), 100.0);
-    assertEquals(grocery2.totalPriceOfGrocery(), 10.0);
-
-  }
 
   @Test
   void TestingUnitConversion() {

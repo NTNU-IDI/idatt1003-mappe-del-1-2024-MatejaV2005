@@ -8,23 +8,23 @@ import java.time.format.DateTimeFormatter;
 public class Grocery {
   private final String name;
   private double amount;
-  private double pricePerUnit;
+  private double price;
   private final String unit;
   public final LocalDate expiryDate;
 
   /**
    * objectvariables of the grocery constructor with following parametres
    * @param name
-   * @param pricePerUnit
+   * @param price
    * @param amount
    * @param unit
    * @param expiryDate
    * */
 
   // Constructor for the Grocery class
-  public Grocery(String name, double pricePerUnit, double amount, String unit, LocalDate expiryDate) {
+  public Grocery(String name, double price, double amount, String unit, LocalDate expiryDate) {
     ExceptionHandling.validateName(name);
-    ExceptionHandling.validatePrice(pricePerUnit);
+    ExceptionHandling.validatePrice(price);
     ExceptionHandling.validateAmount(amount);
     ExceptionHandling.validateUnit(unit);
     ExceptionHandling.validateExpiryDate(expiryDate);
@@ -32,7 +32,7 @@ public class Grocery {
     //ADD MORE EXPCETION HANDLING
     //NOT SUPPOSED TO HAVE A THROW AS A INPUTVALIDATOR BUT RATHER JUST FOR TESTING IN THIS CASE
     this.name = name;
-    setPrice(pricePerUnit);
+    setPrice(price);
     this.unit = unit;
     //HUSK Å BRUKE SET METODER HER!!!!!! IFØLGE VURDERINGSKRITERENE (SENSORVEILEDNING)
     setAmount(amount);
@@ -49,7 +49,7 @@ public class Grocery {
   }
 
   public double getPrice() {
-    return pricePerUnit;
+    return price;
   }
 
   public String getUnit() {
@@ -66,9 +66,9 @@ public class Grocery {
     this.amount = UnitConverter.convertToStandardUnit(amount, unit);;
   }
 
-  public void setPrice(double pricePerUnit) {
-    ExceptionHandling.validatePrice(pricePerUnit);
-    this.pricePerUnit = pricePerUnit;
+  public void setPrice(double price) {
+    ExceptionHandling.validatePrice(price);
+    this.price = price;
   }
 
 
@@ -78,19 +78,14 @@ public class Grocery {
   }
 
   // STILL UNSURE IF IM GOING TO KEEP IT LIKE THIS!!! BUT REMEMBER EVENTUALLY IF YOURE GOING TO KEEP IT LIKE THIS TO ARGUMENT WHY, USE THIS INSTEAD OF SET METHODS!!!
-  public void increaseAmount(double amount) {
-    ExceptionHandling.validateAmountIncrease(amount);
-    this.amount += amount; // Adds to the new amount
+  public void increaseAmount(double amountToIncrease) {
+    ExceptionHandling.validateAmountIncrease(amountToIncrease);
+    this.amount += amountToIncrease; // Adds to the new amount
   }
 
-  public void decreaseAmount(double amount) {
-    ExceptionHandling.validateAmountDecrease(this, amount);
-    this.amount -= amount;
-  }
-
-  public double totalPriceOfGrocery() {
-    ExceptionHandling.validateTotalPrice(amount, pricePerUnit);
-    return amount * pricePerUnit;
+  public void decreaseAmount(double amountToDecrease) {
+    ExceptionHandling.validateAmountDecrease(this, amountToDecrease);
+    this.amount -= amountToDecrease;
   }
 
 
@@ -98,6 +93,6 @@ public class Grocery {
   @Override
   public String toString() {
     DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    return this.name + ", " + this.pricePerUnit + "kr, " + this.amount + " " + this.unit + ", " + dateFormat.format(expiryDate);
+    return this.name + ", " + this.price + "kr, " + this.amount + " " + this.unit + ", " + dateFormat.format(expiryDate);
   }
 }
