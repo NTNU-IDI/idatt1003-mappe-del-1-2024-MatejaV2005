@@ -22,29 +22,37 @@ public class FoodStorage {
   private Map<String, List<Grocery>> storage = new HashMap<>();
 
   /**
-   * Adds a grocery to the storage. If the grocery's name does not exist as a key,
-   * creates a new entry with the name as the key and an ArrayList as the value.
+   * Adds a grocery item to the storage.
+   * If the grocery's name does not exist as a key in the storage, a new entry is created
+   * with the name as the key and an empty list as the value.
    * <p>
-   * If the key already exists, adds the grocery to the corresponding list.
-   * If an identical grocery (same name, expiry date) already exists, sums their amounts.
+   * If the key already exists:
+   * <ul>
+   *   <li>If a grocery with the same name and expiry date exists in the list, their amounts are combined.</li>
+   *   <li>Otherwise, the new grocery is added to the list.</li>
+   * </ul>
+   * After adding or updating, the list of groceries is sorted by their earliest expiry date.
    * <p>
-   * The groceries in each list are sorted by their earliest expiry date.
    *
-   * @param groceryToAdd the grocery to be added to the storage
+   * @param groceryToAdd the grocery item to be added to the storage
    */
   public void registerToStorage(Grocery groceryToAdd) {
-    storage.computeIfAbsent(groceryToAdd.getName(), toList -> new ArrayList<>()).add(groceryToAdd);
+    // Ensure that the list of groceries for the given name exists.
+    List<Grocery> groceries = storage.computeIfAbsent(groceryToAdd.getName(), k -> new ArrayList<>());
 
-    // sorts the grocery items in each corresponding list by the earliest date to expiry
-    storage.get(groceryToAdd.getName())
-        .sort(Comparator.comparing(Grocery::getExpiryDate));
-
-    storage.values().stream()
-        .flatMap(List::stream)
-        .filter(g -> groceryToAdd.equals(g))
+    // Use streams to check if there's an existing grocery item with the same expiry date.
+    //todo: Remember to argument in report why you compare by expiry dates
+    groceries.stream()
+        .filter(g -> g.getExpiryDate().equals(groceryToAdd.getExpiryDate()))
         .findFirst()
-        .ifPresent(g -> g.increaseAmount(groceryToAdd.getAmount()));
+        .ifPresentOrElse(
+            existingGrocery -> existingGrocery.increaseAmount(groceryToAdd.getAmount()),
+            () -> groceries.add(groceryToAdd));
+
+    // Sort the groceries list by expiry date.
+    groceries.sort(Comparator.comparing(Grocery::getExpiryDate));
   }
+
 
   /**
    * Removes a specified amount of a grocery from the storage.
