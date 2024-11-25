@@ -154,7 +154,7 @@ public class FoodStorage {
   public double TotalValueOfGroceries() {
     return storage.values().stream()
         .flatMap(List::stream)
-        .mapToDouble(Grocery::totalPriceOfGrocery)
+        .mapToDouble(Grocery::getPrice)
         .sum();
   }
 
@@ -164,7 +164,7 @@ public class FoodStorage {
     return storage.values().stream()
         .flatMap(List::stream)
         .filter(exp_g -> exp_g.isExpired())
-        .mapToDouble(Grocery::totalPriceOfGrocery)
+        .mapToDouble(Grocery::getPrice)
         .sum();
   }
 
