@@ -38,6 +38,7 @@ public class FoodStorage {
    */
   public void registerToStorage(Grocery groceryToAdd) {
     // Ensure that the list of groceries for the given name exists.
+    // we can use this list locally in the method now to perform operations
     List<Grocery> groceries = storage.computeIfAbsent(groceryToAdd.getName(), k -> new ArrayList<>());
 
     // Use streams to check if there's an existing grocery item with the same expiry date.
@@ -203,4 +204,19 @@ public class FoodStorage {
 
     return sb.toString();
   }
+
+  /**
+   * Retrieves a list of groceries from storage based on the given name.
+   * <p>
+   * This method returns a list of groceries associated with the specified name.
+   * If the name is not found in storage, an empty list is returned.
+   * </p>
+   *
+   * @param name the name of the grocery to search for
+   * @return a list of groceries with the specified name, or an empty list if no groceries are found
+   */
+  public List<Grocery> getGroceriesByName(String name) {
+    return storage.getOrDefault(name, new ArrayList<>());
+  }
+
 }
