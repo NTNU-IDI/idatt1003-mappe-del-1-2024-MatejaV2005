@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.Utils;
 
+import edu.ntnu.idi.idatt.Model.FoodStorage;
 import edu.ntnu.idi.idatt.Model.Grocery;
 import java.time.LocalDate;
 import java.util.List;
@@ -66,6 +67,17 @@ public class ExceptionHandling {
   public static void validateStorageContainsItem(Map<String, List<Grocery>> storage, String itemName) {
     if (!storage.containsKey(itemName.toLowerCase()) || storage.get(itemName.toLowerCase()).isEmpty()) {
       throw new IllegalArgumentException("The grocery item '" + itemName + "' does not exist in storage.");
+    }
+  }
+
+  public static void validateAmountToRemove(Map<String, List<Grocery>> storage, Double amount) {
+    double totalAmount = storage.values().stream()
+        .flatMap(List::stream)
+        .mapToDouble(Grocery::getAmount)
+        .sum();
+
+    if (amount >= totalAmount) {
+      throw new IllegalArgumentException("Amount to be removed cannot be greater than the current total amount of the grocery.");
     }
   }
 }

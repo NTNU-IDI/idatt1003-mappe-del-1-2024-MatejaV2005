@@ -75,6 +75,7 @@ public class FoodStorage {
     ExceptionHandling.validateName(groceryToRemove);
     ExceptionHandling.validateAmount(amount);
     ExceptionHandling.validateStorageContainsItem(storage, groceryToRemove);
+    ExceptionHandling.validateAmountToRemove(storage, amount);
 
 
     String key = groceryToRemove.toLowerCase(); // Convert to lowercase for case-insensitive comparison
