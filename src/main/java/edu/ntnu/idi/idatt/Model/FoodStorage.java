@@ -69,11 +69,13 @@ public class FoodStorage {
    *
    * @param groceryToRemove the grocery to remove, identified by its name
    * @param amount the amount to remove from the storage
-   * @throws IllegalArgumentException if the specified grocery is not found in storage
+   * @throws IllegalArgumentException if the specified grocery is not found in storage, the name is null or an empty String, and if the amount is <= 0
    */
   public void removeAmountFromStorage(String groceryToRemove, double amount) {
     ExceptionHandling.validateName(groceryToRemove);
     ExceptionHandling.validateAmount(amount);
+    ExceptionHandling.validateStorageContainsItem(storage, groceryToRemove);
+
 
     String key = groceryToRemove.toLowerCase(); // Convert to lowercase for case-insensitive comparison
     List<Grocery> itemsToRemove = storage.get(key);
@@ -118,10 +120,12 @@ public class FoodStorage {
    * Searches through all stored groceries to find a match based on the provided grocery's details.
    *
    * @param groceryName the grocery to check for in the storage
-   * @return the matching grocery if found, or {@code null} if no match exists.
+   * @return the matching grocery if found, or an empty {@code ArrayList} if no match exists.
    *         Prints a message if no match is found.
    */
   public List<Grocery> inStorage(String groceryName) {
+    ExceptionHandling.validateName(groceryName);
+
     String key = groceryName.toLowerCase(); // Convert to lowercase for case-insensitive comparison
     List<Grocery> foundGroceries = storage.getOrDefault(key, new ArrayList<>());
 
@@ -143,7 +147,10 @@ public class FoodStorage {
    * @param date the cutoff date for filtering groceries
    * @return a list of groceries expiring before the given date
    */
+  //REMEMBER TO ADD LOGIC FOR IF RETURNING AN EMPTY LIST
   public List<Grocery> bestBefore(LocalDate date) {
+    ExceptionHandling.validateExpiryDate(date);
+
     return storage.values().stream()
         .flatMap(List::stream)
         .filter(bestBefore -> bestBefore.getExpiryDate().isBefore(date))
@@ -166,8 +173,6 @@ public class FoodStorage {
         .mapToDouble(Grocery::getPrice)
         .sum();
   }
-
-  //REMEMBER TO ADD:
 
   public Map<String, List<Grocery>> moveToExpiredGroceries() {
     Map<String, List<Grocery>> expiredGroceries = new HashMap<>(); // Map to hold expired groceries
