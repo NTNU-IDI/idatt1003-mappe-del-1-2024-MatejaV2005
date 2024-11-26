@@ -240,17 +240,15 @@ public class FoodStorageTest {
 
 
   //NEGATIVE-TESTS----------------------------------------------------------------------------
-  void removingAmountFromStorage_CompleteRemovalOfALl() {
+  @Test
+  void testIfRemovalAmountExceedsTotalAmount() {
     Grocery grocery1 = new Grocery("Milk", 35.0, 5.0, "l", LocalDate.now());
     Grocery grocery2 = new Grocery("Milk", 35.0, 5.0, "l", LocalDate.now().plusDays(2));
 
     foodStorage.registerToStorage(grocery1);
     foodStorage.registerToStorage(grocery2);
-    foodStorage.removeAmountFromStorage("Milk", 10.0);
 
-    List<Grocery> groceries = foodStorage.getGroceriesByName(grocery1.getName());
-
-    //assertEquals("You are out of: Milk", foodStorage.removeAmountFromStorage("Milk", 10));
+    assertThrows(IllegalArgumentException.class, () -> foodStorage.removeAmountFromStorage("Milk", 11.0));
   }
 
   @Test
