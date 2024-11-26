@@ -2,6 +2,9 @@ package edu.ntnu.idi.idatt.Utils;
 
 import edu.ntnu.idi.idatt.Model.Grocery;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
 
 public class ExceptionHandling {
   ////
@@ -57,6 +60,12 @@ public class ExceptionHandling {
   public static void nullGrocery(Grocery grocery) {
     if(grocery == null) {
       throw new IllegalArgumentException("Grocery cannot be null.");
+    }
+  }
+
+  public static void validateStorageContainsItem(Map<String, List<Grocery>> storage, String itemName) {
+    if (!storage.containsKey(itemName.toLowerCase()) || storage.get(itemName.toLowerCase()).isEmpty()) {
+      throw new IllegalArgumentException("The grocery item '" + itemName + "' does not exist in storage.");
     }
   }
 }
