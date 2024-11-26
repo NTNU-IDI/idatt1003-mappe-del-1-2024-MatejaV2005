@@ -21,6 +21,7 @@ public class FoodStorage {
    */
   private Map<String, List<Grocery>> storage = new HashMap<>();
 
+
   /**
    * Adds a grocery item to the storage.
    * If the grocery's name does not exist as a key in the storage, a new entry is created
@@ -39,7 +40,7 @@ public class FoodStorage {
   public void registerToStorage(Grocery groceryToAdd) {
     // Ensure that the list of groceries for the given name exists.
     // we can use this list locally in the method now to perform operations
-    List<Grocery> groceries = storage.computeIfAbsent(groceryToAdd.getName().toLowerCase(), k -> new ArrayList<>());
+    List<Grocery> groceries = storage.computeIfAbsent(groceryToAdd.getName(), k -> new ArrayList<>());
 
     // Use streams to check if there's an existing grocery item with the same expiry date.
     //todo: Remember to argument in report why you compare by expiry dates
@@ -68,8 +69,8 @@ public class FoodStorage {
    * @param amount the amount to remove from the storage
    * @throws IllegalArgumentException if the specified grocery is not found in storage
    */
-  public void removeAmountFromStorage(Grocery groceryToRemove, double amount) {
-    List<Grocery> itemsToRemove = storage.get(groceryToRemove.getName());
+  public void removeAmountFromStorage(String groceryToRemove, double amount) {
+    List<Grocery> itemsToRemove = storage.get(groceryToRemove);
     Iterator<Grocery> it = itemsToRemove.iterator();
 
     while (it.hasNext() && amount > 0) {
@@ -86,8 +87,8 @@ public class FoodStorage {
     }
 
     if (itemsToRemove.isEmpty()) {
-      storage.remove(groceryToRemove.getName());
-      System.out.println("you are out of: " + groceryToRemove.getName());
+      storage.remove(groceryToRemove);
+      System.out.println("you are out of: " + groceryToRemove);
     }
   }
 
@@ -110,19 +111,21 @@ public class FoodStorage {
    * <p>
    * Searches through all stored groceries to find a match based on the provided grocery's details.
    *
-   * @param groceryInStorage the grocery to check for in the storage
+   * @param groceryName the grocery to check for in the storage
    * @return the matching grocery if found, or {@code null} if no match exists.
    *         Prints a message if no match is found.
    */
   public List<Grocery> inStorage(String groceryName) {
-    // Get all groceries with the specified name from the storage map.
-    List<Grocery> foundGroceries = storage.getOrDefault(groceryName.toLowerCase(), new ArrayList<>());
+    // Ensure case-insensitive key lookup
+    String key = groceryName;
+    List<Grocery> foundGroceries = storage.getOrDefault(key, new ArrayList<>());
 
     if (foundGroceries.isEmpty()) {
-      // Print a message if no groceries are found.
+      // Log a clear message if no groceries are found
       System.out.println("Grocery not found: " + groceryName);
     } else {
-      // Optionally print the groceries if found (this is not mandatory).
+      // Print found groceries for clarity
+      System.out.println("Found groceries for '" + groceryName + "':");
       foundGroceries.forEach(g -> System.out.println(g));
     }
 
@@ -162,6 +165,8 @@ public class FoodStorage {
   //REMEMBER TO ADD:
 
   public void ExpiredGroceries() {
+    Map<String, List<Grocery>> expiredGroceries = new HashMap<>();
+
 
   }
 
