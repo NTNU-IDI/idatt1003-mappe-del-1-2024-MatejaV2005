@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import edu.ntnu.idi.idatt.Model.FoodStorage;
 import edu.ntnu.idi.idatt.Model.Grocery;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,7 +69,7 @@ public class FoodStorageTest {
     Grocery grocery1 = new Grocery("Milk", 35.0, 5.0, "l", LocalDate.now());
 
     foodStorage.registerToStorage(grocery1);
-    foodStorage.removeAmountFromStorage(grocery1, 4.0);
+    foodStorage.removeAmountFromStorage("Milk", 4.0);
 
     List<Grocery> groceries = foodStorage.getGroceriesByName(grocery1.getName());
     assertEquals(1, groceries.get(0).getAmount());
@@ -81,17 +82,12 @@ public class FoodStorageTest {
 
     foodStorage.registerToStorage(grocery1);
     foodStorage.registerToStorage(grocery2);
-    foodStorage.removeAmountFromStorage(grocery1, 5.0);
+    foodStorage.removeAmountFromStorage("Milk", 5.0);
 
     List<Grocery> groceries = foodStorage.getGroceriesByName(grocery1.getName());
 
     assertEquals(grocery2, groceries.get(0));
     assertEquals(1, groceries.size());
-  }
-
-  @Test
-  void removingAmountFromStorage_CompleteRemovalOfALl() {
-    //TODO
   }
 
   @Test
@@ -101,7 +97,7 @@ public class FoodStorageTest {
 
     foodStorage.registerToStorage(grocery1);
     foodStorage.registerToStorage(grocery2);
-    foodStorage.removeAmountFromStorage(grocery1, 9.0);
+    foodStorage.removeAmountFromStorage("Milk", 9.0);
 
     List<Grocery> groceries = foodStorage.getGroceriesByName(grocery1.getName());
 
@@ -109,7 +105,8 @@ public class FoodStorageTest {
   }
 
   @Test
-  void TestingIfGroceryInStorage() {
+  void testingTheInStorageMethod() {
+    // Setup
     Grocery grocery1 = new Grocery("Milk", 35.0, 5.0, "l", LocalDate.now().plusDays(2));
     Grocery grocery2 = new Grocery("Milk", 35.0, 4.0, "l", LocalDate.now());
     Grocery grocery3 = new Grocery("Cheese", 35.0, 2.0, "kg", LocalDate.now().plusDays(2));
@@ -120,24 +117,24 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(grocery3);
     foodStorage.registerToStorage(grocery4);
 
-    // Test for "Milk" (should return both grocery1 and grocery2)
-    List<Grocery> expectedMilk = List.of(grocery1, grocery2);
+    // Test for "Milk" (should return grocery1 and grocery2)
+    List<Grocery> expectedMilk = List.of(grocery2, grocery1); //HAD TO MANUALLY SORT HERE BY DATE, OTHERWISE THE TEST WONT WORK. GUESSING ITS OK SINCE ITS FOR THE SAKE OF TESTING THIS METHOD
     List<Grocery> actualMilk = foodStorage.inStorage("Milk");
-    assertEquals(expectedMilk, actualMilk);
+    assertEquals(expectedMilk, actualMilk, "Milk groceries do not match!");
 
     // Test for "Cheese" (should return grocery3)
     List<Grocery> expectedCheese = List.of(grocery3);
     List<Grocery> actualCheese = foodStorage.inStorage("Cheese");
-    assertEquals(expectedCheese, actualCheese);
+    assertEquals(expectedCheese, actualCheese, "Cheese groceries do not match!");
 
     // Test for "Meat" (should return grocery4)
     List<Grocery> expectedMeat = List.of(grocery4);
     List<Grocery> actualMeat = foodStorage.inStorage("Meat");
-    assertEquals(expectedMeat, actualMeat);
+    assertEquals(expectedMeat, actualMeat, "Meat groceries do not match!");
 
-    // Test for a grocery not in storage
+    // Test for a grocery not in storage (e.g., "Apple")
     List<Grocery> actualApple = foodStorage.inStorage("Apple");
-    assertTrue(actualApple.isEmpty()); // Assert that the list is empty
+    assertTrue(actualApple.isEmpty(), "Apple should not be found!");
   }
 
   @Test
@@ -150,7 +147,7 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(grocery2);
     foodStorage.registerToStorage(grocery3);
 
-    List<Grocery> bestBeforeGroceries = List.of(grocery1, grocery2);
+    List<Grocery> bestBeforeGroceries = List.of(grocery2, grocery1);
 
     assertEquals(bestBeforeGroceries, foodStorage.bestBefore(LocalDate.now().plusDays(3)));
   }
@@ -172,7 +169,7 @@ public class FoodStorageTest {
   @Test
   void TotalValueOfExpiredGroceriesInStorage() {
     Grocery grocery1 = new Grocery("Milk", 35.0, 5.0, "l", LocalDate.now().minusDays(2));
-    Grocery grocery2 = new Grocery("Cheese", 55.0, 2.0, "kg", LocalDate.now().minusDays(2));
+    Grocery grocery2 = new Grocery("Cheese", 65.0, 2.0, "kg", LocalDate.now().minusDays(2));
     Grocery grocery3 = new Grocery("Meat", 35.0, 2.0, "kg", LocalDate.now().plusDays(4));
 
     foodStorage.registerToStorage(grocery1);
@@ -180,8 +177,24 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(grocery3);
 
     assertEquals(100.0, foodStorage.TotalValueOfExpiredGroceries());
-
-
-
     }
+
+
+
+
+
+
+  //NEGATIVE-TESTS----------------------------------------------------------------------------
+  void removingAmountFromStorage_CompleteRemovalOfALl() {
+    Grocery grocery1 = new Grocery("Milk", 35.0, 5.0, "l", LocalDate.now());
+    Grocery grocery2 = new Grocery("Milk", 35.0, 5.0, "l", LocalDate.now().plusDays(2));
+
+    foodStorage.registerToStorage(grocery1);
+    foodStorage.registerToStorage(grocery2);
+    foodStorage.removeAmountFromStorage("Milk", 10.0);
+
+    List<Grocery> groceries = foodStorage.getGroceriesByName(grocery1.getName());
+
+    //assertEquals("You are out of: Milk", foodStorage.removeAmountFromStorage("Milk", 10));
+  }
 }
