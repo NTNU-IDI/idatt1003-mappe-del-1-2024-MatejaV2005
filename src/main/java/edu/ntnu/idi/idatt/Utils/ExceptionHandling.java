@@ -11,9 +11,9 @@ public class ExceptionHandling {
     }
   }
 
-  public static void validatePrice(double pricePerUnit) {
-    if (pricePerUnit <= 0) {
-      throw new IllegalArgumentException("Price can NOT be a negative value");
+  public static void validatePrice(double price) {
+    if (price <= 0) {
+      throw new IllegalArgumentException("price must be greater than 0.");
     }
   }
 
@@ -33,10 +33,6 @@ public class ExceptionHandling {
     if (expiryDate == null) {
       throw new IllegalArgumentException("Expiry date cannot be null.");
     }
-
-    if (expiryDate.isBefore(LocalDate.now())) {
-      throw new IllegalArgumentException("Expiry date cannot be before the current date.");
-    }
   }
 
 
@@ -55,7 +51,6 @@ public class ExceptionHandling {
       throw new IllegalArgumentException("Amount to decrease cannot be greater than the current amount.");
     }
   }
-
 }
 
 
