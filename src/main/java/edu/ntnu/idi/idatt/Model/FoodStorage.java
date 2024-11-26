@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.Model;
 
+import edu.ntnu.idi.idatt.Utils.ExceptionHandling;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -36,14 +37,15 @@ public class FoodStorage {
    * <p>
    *
    * @param groceryToAdd the grocery item to be added to the storage
+   *
+   * @throws IllegalArgumentException if the specified Grocery is null
    */
   public void registerToStorage(Grocery groceryToAdd) {
-    // Ensure that the list of groceries for the given name exists.
-    // we can use this list locally in the method now to perform operations
-    List<Grocery> groceries = storage.computeIfAbsent(groceryToAdd.getName(), k -> new ArrayList<>());
+    ExceptionHandling.nullGrocery(groceryToAdd);
+
+    List<Grocery> groceries = storage.computeIfAbsent(groceryToAdd.getName().toLowerCase(), k -> new ArrayList<>());
 
     // Use streams to check if there's an existing grocery item with the same expiry date.
-    //todo: Remember to argument in report why you compare by expiry dates
     groceries.stream()
         .filter(g -> g.getExpiryDate().equals(groceryToAdd.getExpiryDate()))
         .findFirst()
@@ -70,7 +72,11 @@ public class FoodStorage {
    * @throws IllegalArgumentException if the specified grocery is not found in storage
    */
   public void removeAmountFromStorage(String groceryToRemove, double amount) {
-    List<Grocery> itemsToRemove = storage.get(groceryToRemove);
+    ExceptionHandling.validateName(groceryToRemove);
+    ExceptionHandling.validateAmount(amount);
+
+    String key = groceryToRemove.toLowerCase(); // Convert to lowercase for case-insensitive comparison
+    List<Grocery> itemsToRemove = storage.get(key);
     Iterator<Grocery> it = itemsToRemove.iterator();
 
     while (it.hasNext() && amount > 0) {
@@ -87,7 +93,7 @@ public class FoodStorage {
     }
 
     if (itemsToRemove.isEmpty()) {
-      storage.remove(groceryToRemove);
+      storage.remove(key);
       System.out.println("you are out of: " + groceryToRemove);
     }
   }
@@ -116,8 +122,7 @@ public class FoodStorage {
    *         Prints a message if no match is found.
    */
   public List<Grocery> inStorage(String groceryName) {
-    // Ensure case-insensitive key lookup
-    String key = groceryName;
+    String key = groceryName.toLowerCase(); // Convert to lowercase for case-insensitive comparison
     List<Grocery> foundGroceries = storage.getOrDefault(key, new ArrayList<>());
 
     if (foundGroceries.isEmpty()) {
@@ -164,11 +169,27 @@ public class FoodStorage {
 
   //REMEMBER TO ADD:
 
-  public void ExpiredGroceries() {
-    Map<String, List<Grocery>> expiredGroceries = new HashMap<>();
+  public Map<String, List<Grocery>> moveToExpiredGroceries() {
+    Map<String, List<Grocery>> expiredGroceries = new HashMap<>(); // Map to hold expired groceries
+    List<Grocery> listOfExpiredGroceries = new ArrayList<>(); // Temporary list to store expired groceries
 
 
+    storage.values().stream()
+        .flatMap(List::stream)
+        .filter(Grocery::isExpired)
+        .forEach(listOfExpiredGroceries::add);
+
+    listOfExpiredGroceries.forEach(grocery -> {
+      expiredGroceries.computeIfAbsent(grocery.getName().toLowerCase(), k -> new ArrayList<>()).add(grocery); // Convert name to lowercase
+    });
+
+    listOfExpiredGroceries.forEach(grocery -> {
+      storage.values().forEach(list -> list.remove(grocery)); // Remove expired grocery from all lists in storage
+    });
+
+    return expiredGroceries;
   }
+
 
   public double TotalValueOfExpiredGroceries() {
     return storage.values().stream()
@@ -177,9 +198,6 @@ public class FoodStorage {
         .mapToDouble(Grocery::getPrice)
         .sum();
   }
-
-  //METHOD THAT FINDS ALL THE EXPIRED GROCERIES AND ADDS IT TO AN EXPIRED LIST/MAP
-  //CALCULATES THE TOTAL VALUE OF THE GROCERIES IN THE EXPIRED LIST/MAP
 
   /**
    * Generates a string representation of the storage content.
@@ -226,7 +244,7 @@ public class FoodStorage {
    * @return a list of groceries with the specified name, or an empty list if no groceries are found
    */
   public List<Grocery> getGroceriesByName(String name) {
-    return storage.getOrDefault(name, new ArrayList<>());
+    return storage.getOrDefault(name.toLowerCase(), new ArrayList<>());
   }
 
 }

@@ -51,6 +51,14 @@ public class ExceptionHandling {
       throw new IllegalArgumentException("Amount to decrease cannot be greater than the current amount.");
     }
   }
+
+
+  //FOR FOODSTORAGE-CLASS----------------------------------------------------------------------------------------------------
+  public static void nullGrocery(Grocery grocery) {
+    if(grocery == null) {
+      throw new IllegalArgumentException("Grocery cannot be null.");
+    }
+  }
 }
 
 
