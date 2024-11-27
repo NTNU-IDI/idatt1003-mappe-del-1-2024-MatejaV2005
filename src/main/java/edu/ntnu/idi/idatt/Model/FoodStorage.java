@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 /**
  * Class representing a food storage system that can manage groceries by adding, removing,
- * sorting, and calculating the total value of stored groceries.
+ * sorting, and calculating the total value of stored groceries, as well as managing expired groceries
  */
 public class FoodStorage {
 
@@ -26,7 +26,7 @@ public class FoodStorage {
   /**
    * Adds a grocery item to the storage.
    * If the grocery's name does not exist as a key in the storage, a new entry is created
-   * with the name as the key and an empty list as the value.
+   * with the name as the key and an empty list as the value, where the grocery is then added.
    * <p>
    * If the key already exists:
    * <ul>
@@ -62,14 +62,15 @@ public class FoodStorage {
    * Removes a specified amount of a grocery from the storage.
    * <p>
    * The removal prioritizes items with the earliest expiry date first.
-   * If the amount to remove exceeds the available quantity of an item,
+   * If the amount to remove exceeds the available quantity of a single item,
    * it continues to the next item in the list until the amount is fully removed.
    * <p>
    * If all items of a grocery are removed, the grocery is also removed from the storage.
    *
    * @param groceryToRemove the grocery to remove, identified by its name
    * @param amount the amount to remove from the storage
-   * @throws IllegalArgumentException if the specified grocery is not found in storage, the name is null or an empty String, and if the amount is <= 0
+   * @throws IllegalArgumentException if the specified grocery is not found in storage, the name is null or an empty String
+   * @throws IllegalArgumentException if the amount to remove is greater than the total amount of a specified grocery in storage
    */
   public void removeAmountFromStorage(String groceryToRemove, double amount) {
     ExceptionHandling.validateName(groceryToRemove);
@@ -121,8 +122,8 @@ public class FoodStorage {
    * Searches through all stored groceries to find a match based on the provided grocery's details.
    *
    * @param groceryName the grocery to check for in the storage
-   * @return the matching grocery if found, or an empty {@code ArrayList} if no match exists.
-   *         Prints a message if no match is found.
+   * @return all the items of the matching grocery name if found.
+   *         otherwise returns a message to inform if no match exists.
    */
   public List<Grocery> inStorage(String groceryName) {
     ExceptionHandling.validateName(groceryName);
@@ -136,6 +137,7 @@ public class FoodStorage {
     } else {
       // Print found groceries for clarity
       System.out.println("Found groceries for '" + groceryName + "':");
+      System.out.println("--------------------------------------------");
       foundGroceries.forEach(g -> System.out.println(g));
     }
 
@@ -146,17 +148,26 @@ public class FoodStorage {
    * Returns a list of groceries that expire before the specified date.
    *
    * @param date the cutoff date for filtering groceries
-   * @return a list of groceries expiring before the given date
+   * @return a list of groceries expiring before the given date.
+   *         if no groceries aer found before the best-before date, prints a message
    */
   //REMEMBER TO ADD LOGIC FOR IF RETURNING AN EMPTY LIST
   public List<Grocery> bestBefore(LocalDate date) {
     ExceptionHandling.validateExpiryDate(date);
 
-    return storage.values().stream()
+    List<Grocery> beforeDate =
+        storage.values().stream()
         .flatMap(List::stream)
         .filter(bestBefore -> bestBefore.getExpiryDate().isBefore(date))
         .toList();
+
+    if (beforeDate.isEmpty()) {
+      System.out.println("No groceries found with a best-before date for following: " +date);
+    }
+
+    return beforeDate;
   }
+  //REMEMBER TO ADD A TEST FOR CHECKING IF IT RETURNS MESSAGE IF NO GROCERIES FOUND BEFORE GIVEN DATE
 
   /**
    * Computes the total monetary value of all groceries stored.
@@ -175,6 +186,28 @@ public class FoodStorage {
         .sum();
   }
 
+  /**
+   * Moves all expired groceries from the storage to a new {@code Map} of expired groceries.
+   *
+   * <p>This method identifies and removes expired groceries from the current {@code storage} and organizes
+   * them into a new {@code Map}. The map's keys are the lowercase names of the expired groceries,
+   * and the values are lists of corresponding {@code Grocery} objects.
+   *
+   * <p>Steps performed:
+   * <ol>
+   *   <li>Filters all expired groceries from the {@code storage} using {@link Grocery#isExpired()}.
+   *   <li>Adds the expired groceries to a temporary list ({@code listOfExpiredGroceries}).
+   *   <li>Populates the {@code expiredGroceries} map:
+   *       <ul>
+   *         <li>The name of each grocery (in lowercase) is used as the key.</li>
+   *         <li>An {@code ArrayList} of all occurrences of the expired grocery is added as the value.</li>
+   *       </ul>
+   *   <li>Removes all expired groceries from the original {@code storage}.
+   * </ol>
+   *
+   * @return a {@code Map<String, List<Grocery>>} containing expired groceries, grouped by name
+   *         (in lowercase).
+   */
   public Map<String, List<Grocery>> moveToExpiredGroceries() {
     Map<String, List<Grocery>> expiredGroceries = new HashMap<>(); // Map to hold expired groceries
     List<Grocery> listOfExpiredGroceries = new ArrayList<>(); // Temporary list to store expired groceries
@@ -196,7 +229,15 @@ public class FoodStorage {
     return expiredGroceries;
   }
 
-
+  /**
+   * Calculates the total value of all expired groceries in the storage.
+   *
+   * <p>Filters expired groceries from the {@code storage} using {@link Grocery#isExpired()},
+   * retrieves their prices using {@link Grocery#getPrice()}, and sums them up to return the
+   * total value of expired groceries.
+   *
+   * @return the total sum of prices of all expired groceries as a {@code double}.
+   */
   public double TotalValueOfExpiredGroceries() {
     return storage.values().stream()
         .flatMap(List::stream)
