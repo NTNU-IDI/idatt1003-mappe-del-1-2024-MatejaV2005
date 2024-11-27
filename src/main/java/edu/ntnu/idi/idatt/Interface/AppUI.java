@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.Interface;
 
 import edu.ntnu.idi.idatt.Model.FoodStorage;
 import edu.ntnu.idi.idatt.Model.Grocery;
+import edu.ntnu.idi.idatt.Utils.ExceptionHandling;
 import edu.ntnu.idi.idatt.Utils.InputValidation;
 import java.time.LocalDate;
 import java.util.List;
@@ -47,8 +48,8 @@ public class AppUI {
     System.out.println("9. List all groceries");
     System.out.println("0. Quit");
 
-    int menuChoice = 0;
-    return InputValidation.getValidInt("\nPlease enter a number between 1 and 9: ");
+    int menuChoice = InputValidation.getValidInt("\nPlease enter a number between 1 and 9: ");
+    return menuChoice;
   }
 
 
@@ -101,18 +102,19 @@ public class AppUI {
       // Read all inputs correctly
       System.out.print("Name of Grocery: ");
       String groceryName = scanner.nextLine();
+      ExceptionHandling.validateName(groceryName);
 
-      System.out.print("Price of Grocery: ");
-      double groceryPrice = Double.parseDouble(scanner.nextLine()); // Parse as double to avoid buffer issues
+      double groceryPrice = InputValidation.getValidDouble("Price of Grocery: ");
 
-      System.out.print("Amount of Grocery: ");
-      double groceryAmount = Double.parseDouble(scanner.nextLine());
+      double groceryAmount = InputValidation.getValidDouble("Amount of grocery: ");
 
       System.out.print("Corresponding Unit: ");
       String groceryUnit = scanner.nextLine();
+      ExceptionHandling.validateUnit(groceryUnit);
 
       System.out.print("Expiry Date (YYYY-MM-DD): ");
       LocalDate groceryExpiryDate = LocalDate.parse(scanner.nextLine());
+      ExceptionHandling.validateExpiryDate(groceryExpiryDate);
 
       // Create and register the grocery
       Grocery registeredGrocery = new Grocery(groceryName, groceryPrice, groceryAmount, groceryUnit, groceryExpiryDate);
