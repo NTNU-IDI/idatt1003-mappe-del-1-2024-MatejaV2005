@@ -114,11 +114,11 @@ public class AppUI {
     try {
       String groceryName = InputValidation.getValidString("\nPlease enter Grocery name: ");
 
-      double groceryPrice = InputValidation.getValidDouble("Price of Grocery: ");
+      double groceryPrice = InputValidation.getValidDouble("Price of Grocery: ", true);
 
-      double groceryAmount = InputValidation.getValidDouble("Amount of grocery: ");
+      double groceryAmount = InputValidation.getValidDouble("Amount of grocery: ", false);
 
-      String groceryUnit = InputValidation.getValidString("Corresponding Unit: ");
+      String groceryUnit = InputValidation.getValidUnit("Corresponding Unit: ");
 
       LocalDate groceryExpiryDate = InputValidation.getValidDate("Expiry Date: ");
 
@@ -136,7 +136,7 @@ public class AppUI {
 
   private void RemoveGroceryFromStorage() {
     String groceryToRemove = InputValidation.getValidString("\nPlease enter Grocery name: ");
-    Double amountToRemove = InputValidation.getValidDouble("\nPlease enter amount to remove: ");
+    Double amountToRemove = InputValidation.getValidDouble("\nPlease enter amount to remove: ", false);
     storage.removeAmountFromStorage(groceryToRemove, amountToRemove);
   }
 
