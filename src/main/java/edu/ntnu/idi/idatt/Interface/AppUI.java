@@ -75,29 +75,29 @@ public class AppUI {
 
 
         case FIND_GROCERY_IN_STORAGE -> {
-
+          FindGroceryInStorage();
         }
 
 
         case BEST_BEFORE_EXPIRY_DATE -> {
-
+          BestBeforeExpiryDate();
         }
 
         case TOTAL_VALUE_OF_GROCERIES_IN_STORAGE -> {
-
+          TotalValueOfGroceries();
         }
 
 
         case VIEW_EXPIRED_GROCERIES -> {
-
+          ViewExpiredGroceries();
         }
 
         case TOTAL_VALUE_OF_EXPIRED_GROCERIES -> {
-
+          TotalValueOfExpiredGroceries();
         }
 
         case LIST_ALL_GROCERIES -> {
-          System.out.println(storage);
+          ShowStorage();
         }
 
 
@@ -145,27 +145,29 @@ public class AppUI {
   }
 
   private void FindGroceryInStorage() {
-
+    String groceryToFind = InputValidation.getValidString("Please enter the name of the grocery:\n");
+    storage.inStorage(groceryToFind);
   }
 
   private void BestBeforeExpiryDate() {
-
+    LocalDate bestBeforeDate = InputValidation.getValidDate("Please enter a date you want to check for (dd-mm-yyyy)");
+    System.out.println(storage.bestBefore(bestBeforeDate));
   }
 
-  private void TotValueOfGroceries() {
-
+  private void TotalValueOfGroceries() {
+    System.out.println("The total monetary value of all groceries: \n" +storage.TotalValueOfGroceries() + "kr");
   }
 
   private void ViewExpiredGroceries() {
-
+    System.out.println(storage.moveToExpiredGroceries());
   }
 
   private void TotalValueOfExpiredGroceries() {
-
+    System.out.println("Total monetary value of expired groceries in storage: \n" +storage.TotalValueOfExpiredGroceries() +"kr");
   }
 
   private void ShowStorage() {
-
+    System.out.println(storage);
   }
 
   private void init() {
@@ -179,12 +181,12 @@ public class AppUI {
         new Grocery("Milk", 15.0, 2.0, "l", LocalDate.of(2024, 11, 25)),
         new Grocery("Milk", 15.0, 1.5, "l", LocalDate.of(2024, 12, 15)),
 
-        new Grocery("Bread", 25.0, 1.0, "Stk", LocalDate.of(2024, 11, 25)),
-        new Grocery("Bread", 25.0, 2.0, "Stk", LocalDate.of(2024, 11, 28)),
-        new Grocery("Bread", 25.0, 1.0, "Stk", LocalDate.of(2024, 12, 1)),
+        new Grocery("Bread", 25.0, 1.0, "stk", LocalDate.of(2024, 11, 25)),
+        new Grocery("Bread", 25.0, 2.0, "stk", LocalDate.of(2024, 11, 28)),
+        new Grocery("Bread", 25.0, 1.0, "stk", LocalDate.of(2024, 12, 1)),
 
-        new Grocery("Eggs", 5.0, 12.0, "Stk", LocalDate.of(2024, 12, 15)),
-        new Grocery("Eggs", 5.0, 6.0, "Stk", LocalDate.of(2024, 12, 5)),
+        new Grocery("Eggs", 5.0, 12.0, "stk", LocalDate.of(2024, 12, 15)),
+        new Grocery("Eggs", 5.0, 6.0, "stk", LocalDate.of(2024, 12, 5)),
 
         new Grocery("Chicken", 150.0, 1.0, "kg", LocalDate.of(2024, 11, 30)),
         new Grocery("Chicken", 150.0, 2.0, "kg", LocalDate.of(2024, 12, 10)),
