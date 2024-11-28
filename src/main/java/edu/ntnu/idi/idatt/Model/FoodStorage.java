@@ -22,6 +22,9 @@ public class FoodStorage {
    */
   private Map<String, List<Grocery>> storage = new HashMap<>();
 
+  Map<String, List<Grocery>> expiredGroceries = new HashMap<>(); // Map to hold expired groceries
+
+
   /**
    * Adds a grocery item to the storage.
    * If the grocery's name does not exist as a key in the storage, a new entry is created
@@ -185,6 +188,22 @@ public class FoodStorage {
         .sum();
   }
 
+
+  public void removeExpiredGroceries() {
+    //Loop variable groceryList for each list in storage.
+    for (List<Grocery> groceryList : storage.values()) {
+      Iterator<Grocery> it = groceryList.iterator();
+
+      while (it.hasNext()) {
+        Grocery grocery = it.next();
+
+        if (grocery.isExpired()) {
+          it.remove();
+        }
+      }
+    }
+  }
+
   /**
    * Moves all expired groceries from the storage to a new {@code Map} of expired groceries.
    *
@@ -201,17 +220,14 @@ public class FoodStorage {
    *         <li>The name of each grocery (in lowercase) is used as the key.</li>
    *         <li>An {@code ArrayList} of all occurrences of the expired grocery is added as the value.</li>
    *       </ul>
-   *   <li>Removes all expired groceries from the original {@code storage}.
    * </ol>
    *
    * @return a {@code Map<String, List<Grocery>>} containing expired groceries, grouped by name
    *         (in lowercase).
    */
-  //TODO: RENAME FOR A MORE CLARIFYING NAME
-  public Map<String, List<Grocery>> moveToExpiredGroceries() {
-    Map<String, List<Grocery>> expiredGroceries = new HashMap<>(); // Map to hold expired groceries
+  //TODO: TRY TO SPLIT UP METHOD MORE
+  public Map<String, List<Grocery>> FilterAndGroupExpiredGroceries() {
     List<Grocery> listOfExpiredGroceries = new ArrayList<>(); // Temporary list to store expired groceries
-
 
     storage.values().stream()
         .flatMap(List::stream)
@@ -222,9 +238,8 @@ public class FoodStorage {
       expiredGroceries.computeIfAbsent(grocery.getName().toLowerCase(), k -> new ArrayList<>()).add(grocery); // Convert name to lowercase
     });
 
-    listOfExpiredGroceries.forEach(grocery -> {
-      storage.values().forEach(list -> list.remove(grocery)); // Remove expired grocery from all lists in storage
-    });
+    removeExpiredGroceries();
+
 
     return expiredGroceries;
   }
