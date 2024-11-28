@@ -11,7 +11,12 @@ public class ExceptionHandling {
   ////
   public static void validateName(String name) {
     if (name == null || name.trim().isEmpty()) {
-      throw new IllegalArgumentException("Unit can NOT be a null or empty value");
+      throw new IllegalArgumentException("Name can NOT be a null or empty value");
+    }
+
+    if (name.trim().matches("\\d+")) {
+      throw new IllegalArgumentException("name can not be a numerical value");
+
     }
   }
 
