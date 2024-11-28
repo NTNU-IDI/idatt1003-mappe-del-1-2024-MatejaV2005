@@ -14,7 +14,7 @@ public class ExceptionHandling {
       throw new IllegalArgumentException("Name can NOT be a null or empty value");
     }
 
-    if (name.trim().matches("\\d+")) {
+    if (name.trim().matches("-?\\d+(\\.\\d+)?")) {
       throw new IllegalArgumentException("name can not be a numerical value");
 
     }
