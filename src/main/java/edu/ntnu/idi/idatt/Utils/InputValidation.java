@@ -25,22 +25,26 @@ public class InputValidation {
     }
   }
 
-  public static double getValidDouble(String prompt) {
+  public static double getValidDouble(String prompt, boolean isPrice) {
     System.out.println(prompt);
     String input = sc.nextLine();
     double output;
 
     try {
       output = Double.parseDouble(input);
-      ExceptionHandling.validatePrice(output);
-      ExceptionHandling.validateAmount(output);
+      if (isPrice) {
+        ExceptionHandling.validatePrice(output);
+      } else {
+        ExceptionHandling.validateAmount(output);
+
+      }
       return output;
     } catch (NumberFormatException e) {
       System.out.println("error: Input must be a valid number");
-      return getValidDouble(prompt);
+      return getValidDouble(prompt, isPrice);
     } catch (IllegalArgumentException e) {
-      System.out.println("error:" + e.getMessage());
-      return getValidDouble(prompt);
+      System.out.println("error: " + e.getMessage());
+      return getValidDouble(prompt, isPrice);
     }
   }
 
@@ -59,6 +63,23 @@ public class InputValidation {
     }
   }
 
+  public static String getValidUnit(String prompt) {
+    System.out.println(prompt);
+    String input = sc.nextLine().trim();
+    String output;
+
+    try {
+      output = input;
+      ExceptionHandling.validateUnit(output);
+      UnitConverter.ConvertUnitAmount(1, output);
+      return output;
+    }
+    catch (IllegalArgumentException e) {
+      System.out.println("error: " + e.getMessage());
+      return getValidUnit(prompt);
+    }
+  }
+
   public static LocalDate getValidDate(String prompt) {
     System.out.println(prompt);
     String dateString = sc.nextLine();
@@ -70,7 +91,7 @@ public class InputValidation {
       ExceptionHandling.validateExpiryDate(output);
       return output;
     } catch (DateTimeParseException e) { //Throw exception if date format is incorrect
-      System.out.println("Invalid date format." + e.getMessage());
+      System.out.println("Invalid date format.");
       return getValidDate(prompt);
     }
   }
