@@ -45,20 +45,33 @@ public class InputValidation {
   }
 
   public static String getValidString(String prompt) {
-    return "JNAFIIA";
+    System.out.println(prompt);
+    String input = sc.nextLine().trim();
+    String output;
+
+    try {
+      output = input;
+      ExceptionHandling.validateName(output);
+      return output;
+    } catch (IllegalArgumentException e) {
+      System.out.println(e.getMessage());
+      return getValidString(prompt);
+    }
   }
 
-  public static LocalDate getDateFromUser(Scanner scan) {
-    String dateString = scan.nextLine();
+  public static LocalDate getValidDate(String prompt) {
+    System.out.println(prompt);
+    String dateString = sc.nextLine();
     DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy"); //DateTimeFormatter class that instantiates a new DateTimeFormatter instance and sets it to the desired form of our date
-    System.out.println(dateString);
+    LocalDate output;
+
     try {
-      LocalDate expiryDate = LocalDate.parse(dateString, dateFormat); // compares here if the user-input of the date (dateString) format equals the dateFormat we assigned by parsing through it. If valid, we assign it to expiryDate and the value is converted to a Date datatype
-      //dateFormat.parse has the built-in function to, if correct format, convert the String to Date datatype. parse-method is from SimpleDateFormat
-      return expiryDate;
+      output = LocalDate.parse(dateString, dateFormat); // compares here if the user-input of the date (dateString) format equals the dateFormat we assigned by parsing through it. If valid, we assign it to expiryDate and the value is converted to a Date datatype
+      ExceptionHandling.validateExpiryDate(output);
+      return output;
     } catch (DateTimeParseException e) { //Throw exception if date format is incorrect
       System.out.println("Invalid date format." + e.getMessage());
-      return getDateFromUser(scan);
+      return getValidDate(prompt);
     }
   }
 }

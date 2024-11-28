@@ -60,61 +60,67 @@ public class AppUI {
     while (!finished) {
       int menuChoice = this.showMenu();
       switch (menuChoice) {
-        case ADD_GROCERY:
+        case ADD_GROCERY -> {
           AddGroceryToStorage();
-          break;
+        }
 
-        case REMOVE_GROCERY:
-          //TODO
+        case REMOVE_GROCERY -> {
+          RemoveGroceryFromStorage();
+        }
 
-        case GROCERIES_SORTED:
-          //TODO
 
-        case FIND_GROCERY_IN_STORAGE:
-          //TODO
+        case GROCERIES_SORTED -> {
+          SortedStorage();
+        }
 
-        case BEST_BEFORE_EXPIRY_DATE:
-          //TODO
 
-        case TOTAL_VALUE_OF_GROCERIES_IN_STORAGE:
-          //TODO
+        case FIND_GROCERY_IN_STORAGE -> {
 
-        case VIEW_EXPIRED_GROCERIES:
-          //TODO
+        }
 
-        case TOTAL_VALUE_OF_EXPIRED_GROCERIES:
-          //TODO
 
-        case LIST_ALL_GROCERIES:
+        case BEST_BEFORE_EXPIRY_DATE -> {
+
+        }
+
+        case TOTAL_VALUE_OF_GROCERIES_IN_STORAGE -> {
+
+        }
+
+
+        case VIEW_EXPIRED_GROCERIES -> {
+
+        }
+
+        case TOTAL_VALUE_OF_EXPIRED_GROCERIES -> {
+
+        }
+
+        case LIST_ALL_GROCERIES -> {
           System.out.println(storage);
-          break;
+        }
 
-        case EXIT:
-          //TODO
+
+        case EXIT -> {
+
+        }
       }
     }
   }
 
   private void AddGroceryToStorage() {
-    System.out.println("Enter the following: \nName of Grocery, \nPrice of Grocery, \nAmount of grocery, \nCorresponding Unit, \nExpiry Date");
+    System.out.println("Enter the following: |Name of Grocery|  |Price of Grocery|  |Amount of grocery|  |Corresponding Unit|  |Expiry Date|");
 
     try {
-      // Read all inputs correctly
-      System.out.print("Name of Grocery: ");
-      String groceryName = scanner.nextLine();
-      ExceptionHandling.validateName(groceryName);
+      String groceryName = InputValidation.getValidString("\nPlease enter Grocery name: ");
 
       double groceryPrice = InputValidation.getValidDouble("Price of Grocery: ");
 
       double groceryAmount = InputValidation.getValidDouble("Amount of grocery: ");
 
-      System.out.print("Corresponding Unit: ");
-      String groceryUnit = scanner.nextLine();
-      ExceptionHandling.validateUnit(groceryUnit);
+      String groceryUnit = InputValidation.getValidString("Corresponding Unit: ");
 
-      System.out.print("Expiry Date (YYYY-MM-DD): ");
-      LocalDate groceryExpiryDate = LocalDate.parse(scanner.nextLine());
-      ExceptionHandling.validateExpiryDate(groceryExpiryDate);
+      LocalDate groceryExpiryDate = InputValidation.getValidDate("Expiry Date: ");
 
       // Create and register the grocery
       Grocery registeredGrocery = new Grocery(groceryName, groceryPrice, groceryAmount, groceryUnit, groceryExpiryDate);
@@ -129,11 +135,13 @@ public class AppUI {
   }
 
   private void RemoveGroceryFromStorage() {
-
+    String groceryToRemove = InputValidation.getValidString("\nPlease enter Grocery name: ");
+    Double amountToRemove = InputValidation.getValidDouble("\nPlease enter amount to remove: ");
+    storage.removeAmountFromStorage(groceryToRemove, amountToRemove);
   }
 
   private void SortedStorage() {
-
+    System.out.println(storage.sortGroceries());
   }
 
   private void FindGroceryInStorage() {
