@@ -22,7 +22,6 @@ public class FoodStorage {
    */
   private Map<String, List<Grocery>> storage = new HashMap<>();
 
-
   /**
    * Adds a grocery item to the storage.
    * If the grocery's name does not exist as a key in the storage, a new entry is created
@@ -136,7 +135,7 @@ public class FoodStorage {
       System.out.println("Grocery not found: " + groceryName);
     } else {
       // Print found groceries for clarity
-      System.out.println("Found groceries for '" + groceryName + "':");
+      System.out.println("Found groceries for |" + groceryName + "|:");
       System.out.println("--------------------------------------------");
       foundGroceries.forEach(g -> System.out.println(g));
     }
@@ -208,6 +207,7 @@ public class FoodStorage {
    * @return a {@code Map<String, List<Grocery>>} containing expired groceries, grouped by name
    *         (in lowercase).
    */
+  //TODO: RENAME FOR A MORE CLARIFYING NAME
   public Map<String, List<Grocery>> moveToExpiredGroceries() {
     Map<String, List<Grocery>> expiredGroceries = new HashMap<>(); // Map to hold expired groceries
     List<Grocery> listOfExpiredGroceries = new ArrayList<>(); // Temporary list to store expired groceries
@@ -246,19 +246,25 @@ public class FoodStorage {
         .sum();
   }
 
+
+  //DISPLAY-METHODS____________________________________________________________________________
+  //TODO: REWRITE JAVADOC
   /**
    * Generates a string representation of the storage content.
    * <p>
    * The string will contain a list of all grocery names, their amounts, and expiry dates.
    *
+   * @param groceries decides which storage will be formatted
+   *
    * @return a formatted string displaying all stored groceries with details
    */
-  @Override
-  public String toString() {
+
+
+  public String formatGroceries(Map<String, List<Grocery>> groceries) {
     DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     StringBuilder sb = new StringBuilder();
 
-    for (Map.Entry<String, List<Grocery>> entry : storage.entrySet()) {
+    for (Map.Entry<String, List<Grocery>> entry : groceries.entrySet()) {
       String groceryName = entry.getKey();
       List<Grocery> groceryList = entry.getValue();
 
@@ -281,6 +287,22 @@ public class FoodStorage {
   }
 
   /**
+   * Returns a string representation of the grocery storage.
+   * <p>
+   * If {@code sorted} is {@code true}, the groceries are displayed in alphabetical order by name.
+   * Otherwise, they are displayed in their original order.
+   *
+   * @param sorted whether to sort the groceries by name
+   * @return a formatted string of all groceries with their details
+   */
+  public String toString (boolean sorted) {
+    Map<String, List<Grocery>> groceriesToDisplay = sorted ? sortGroceries() : storage;
+    return formatGroceries(groceriesToDisplay);
+  }
+
+
+  /**
+   * Helper method for testing
    * Retrieves a list of groceries from storage based on the given name.
    * <p>
    * This method returns a list of groceries associated with the specified name.
