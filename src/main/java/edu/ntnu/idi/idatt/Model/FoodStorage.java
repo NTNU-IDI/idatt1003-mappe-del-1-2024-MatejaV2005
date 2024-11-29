@@ -317,7 +317,7 @@ public class FoodStorage {
     return formatGroceries(groceriesToDisplay);
   }
 
-  //TODO: JAVADOC DETTE ON HOOD
+  //TODO: JAVADOC DETTE ON HOODD
   public String DisplayExpiredGroceries() {
     Map<String, List<Grocery>> expiredGroceriesToDisplay = FilterAndGroupExpiredGroceries();
     return formatGroceries(expiredGroceriesToDisplay);
