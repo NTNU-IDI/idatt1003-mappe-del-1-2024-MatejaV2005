@@ -24,6 +24,9 @@ public class FoodStorage {
    */
   private Map<String, List<Grocery>> storage = new HashMap<>();
 
+  /**
+   * A map to store the expired groceries by their name, where each grocery name maps to a list of grocery items.
+   */
   Map<String, List<Grocery>> expiredGroceries = new HashMap<>(); // Map to hold expired groceries
 
 
@@ -169,7 +172,7 @@ public class FoodStorage {
         .toList();
 
     if (beforeDate.isEmpty()) {
-      System.out.println("No groceries found with a best-before date for following: " +date);
+      System.out.println("No groceries found with a best-before date for following date: " +date);
     }
 
     return beforeDate;
@@ -193,7 +196,16 @@ public class FoodStorage {
         .sum();
   }
 
-  //TODO: JAVADOC DETTE ON HOOD
+  /**
+   * Removes all expired groceries from the storage.
+   *
+   * <p>This method iterates through each grocery list in the {@code storage} map, checking if each
+   * grocery item is expired using {@link Grocery#isExpired()}. Expired items are removed from the list
+   * using an {@link Iterator} to ensure safe modification during iteration.</p>
+   *
+   * <p>After execution, the storage will no longer contain expired groceries, but the overall structure
+   * of the {@code storage} map remains unchanged.</p>
+   */
   public void removeExpiredGroceries() {
     //Loop variable groceryList for each list in storage.
     for (List<Grocery> groceryList : storage.values()) {
@@ -210,25 +222,18 @@ public class FoodStorage {
   }
 
   /**
-   * Moves all expired groceries from the storage to a new {@code Map} of expired groceries.
+   * Filters and groups expired groceries by name.
    *
-   * <p>This method identifies and removes expired groceries from the current {@code storage} and organizes
-   * them into a new {@code Map}. The map's keys are the lowercase names of the expired groceries,
-   * and the values are lists of corresponding {@code Grocery} objects.
+   * <p>This method scans the {@code storage} map to identify groceries that have expired,
+   * as determined by {@link Grocery#isExpired()}. All expired items are then grouped by their
+   * lowercase name in the {@code expiredGroceries} map, ensuring case-insensitive organization.
+   * Each key in the map represents a grocery name (in lowercase), and the value is a list of
+   * expired items with that name.</p>
    *
-   * <p>Steps performed:
-   * <ol>
-   *   <li>Filters all expired groceries from the {@code storage} using {@link Grocery#isExpired()}.
-   *   <li>Adds the expired groceries to a temporary list ({@code listOfExpiredGroceries}).
-   *   <li>Populates the {@code expiredGroceries} map:
-   *       <ul>
-   *         <li>The name of each grocery (in lowercase) is used as the key.</li>
-   *         <li>An {@code ArrayList} of all occurrences of the expired grocery is added as the value.</li>
-   *       </ul>
-   * </ol>
+   * <p>This method ensures that expired groceries are efficiently organized for further
+   * processing, while leaving the original {@code storage} map unmodified.</p>
    *
-   * @return a {@code Map<String, List<Grocery>>} containing expired groceries, grouped by name
-   *         (in lowercase).
+   * @return a map where keys are grocery names (in lowercase) and values are lists of expired groceries.
    */
   //TODO: TRY TO SPLIT UP METHOD MORE
   public Map<String, List<Grocery>> FilterAndGroupExpiredGroceries() {
@@ -317,7 +322,14 @@ public class FoodStorage {
     return formatGroceries(groceriesToDisplay);
   }
 
-  //TODO: JAVADOC DETTE ON HOODD
+  /**
+   * Displays all expired groceries in a formatted string.
+   *
+   * <p>This method filters and groups expired groceries using {@link #FilterAndGroupExpiredGroceries()},
+   * and then formats the resulting map of expired groceries using {@link #formatGroceries(Map)}.</p>
+   *
+   * @return a formatted string representing all expired groceries, grouped by name.
+   */
   public String DisplayExpiredGroceries() {
     Map<String, List<Grocery>> expiredGroceriesToDisplay = FilterAndGroupExpiredGroceries();
     return formatGroceries(expiredGroceriesToDisplay);
