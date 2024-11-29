@@ -1,6 +1,8 @@
 package edu.ntnu.idi.idatt.Model;
 
+
 import edu.ntnu.idi.idatt.Utils.ExceptionHandling;
+import edu.ntnu.idi.idatt.Utils.UnitConverter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -71,14 +73,17 @@ public class FoodStorage {
    *
    * @param groceryToRemove the grocery to remove, identified by its name
    * @param amount the amount to remove from the storage
+   * @param unit unit for the amount to be removed
    * @throws IllegalArgumentException if the specified grocery is not found in storage, the name is null or an empty String
    * @throws IllegalArgumentException if the amount to remove is greater than the total amount of a specified grocery in storage
    */
-  public void removeAmountFromStorage(String groceryToRemove, double amount) {
+  public void removeAmountFromStorage(String groceryToRemove, double amount, String unit) {
     ExceptionHandling.validateName(groceryToRemove);
     ExceptionHandling.validateAmount(amount);
     ExceptionHandling.validateStorageContainsItem(storage, groceryToRemove);
     ExceptionHandling.validateAmountToRemove(storage, amount);
+
+    amount = UnitConverter.ConvertUnitAmount(amount, unit);
 
 
     String key = groceryToRemove.toLowerCase(); // Convert to lowercase for case-insensitive comparison
@@ -188,7 +193,7 @@ public class FoodStorage {
         .sum();
   }
 
-
+  //TODO: JAVADOC DETTE ON HOOD
   public void removeExpiredGroceries() {
     //Loop variable groceryList for each list in storage.
     for (List<Grocery> groceryList : storage.values()) {
@@ -237,9 +242,6 @@ public class FoodStorage {
     listOfExpiredGroceries.forEach(grocery -> {
       expiredGroceries.computeIfAbsent(grocery.getName().toLowerCase(), k -> new ArrayList<>()).add(grocery); // Convert name to lowercase
     });
-
-    removeExpiredGroceries();
-
 
     return expiredGroceries;
   }
@@ -313,6 +315,12 @@ public class FoodStorage {
   public String toString (boolean sorted) {
     Map<String, List<Grocery>> groceriesToDisplay = sorted ? sortGroceries() : storage;
     return formatGroceries(groceriesToDisplay);
+  }
+
+  //TODO: JAVADOC DETTE ON HOOD
+  public String DisplayExpiredGroceries() {
+    Map<String, List<Grocery>> expiredGroceriesToDisplay = FilterAndGroupExpiredGroceries();
+    return formatGroceries(expiredGroceriesToDisplay);
   }
 
 
