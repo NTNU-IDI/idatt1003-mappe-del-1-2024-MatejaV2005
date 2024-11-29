@@ -2,7 +2,6 @@ package edu.ntnu.idi.idatt.Interface;
 
 import edu.ntnu.idi.idatt.Model.FoodStorage;
 import edu.ntnu.idi.idatt.Model.Grocery;
-import edu.ntnu.idi.idatt.Utils.ExceptionHandling;
 import edu.ntnu.idi.idatt.Utils.InputValidation;
 import java.time.LocalDate;
 import java.util.List;
@@ -65,7 +64,7 @@ public class AppUI {
         }
 
         case REMOVE_GROCERY -> {
-          RemoveGroceryFromStorage();
+          RemoveAmountOfGroceryFromStorage();
         }
 
 
@@ -102,7 +101,7 @@ public class AppUI {
 
 
         case EXIT -> {
-
+          finished = true;
         }
       }
     }
@@ -110,6 +109,7 @@ public class AppUI {
 
   private void AddGroceryToStorage() {
     System.out.println("Enter the following: |Name of Grocery|  |Price of Grocery|  |Amount of grocery|  |Corresponding Unit|  |Expiry Date|");
+    System.out.println("SIDENOTE: default display of amount is in grams for dry units");
 
     try {
       String groceryName = InputValidation.getValidString("\nPlease enter Grocery name: ");
@@ -134,14 +134,15 @@ public class AppUI {
     }
   }
 
-  private void RemoveGroceryFromStorage() {
+  private void RemoveAmountOfGroceryFromStorage() {
     String groceryToRemove = InputValidation.getValidString("\nPlease enter Grocery name: ");
-    Double amountToRemove = InputValidation.getValidDouble("\nPlease enter amount to remove: ", false);
-    storage.removeAmountFromStorage(groceryToRemove, amountToRemove);
+    String desiredUnit = InputValidation.getValidString("\nPlease enter the desired unit for removal: ");
+    double amountToRemove = InputValidation.getValidDouble("\nPlease enter amount to remove: ", false);
+    storage.removeAmountFromStorage(groceryToRemove, amountToRemove, desiredUnit);
   }
 
   private void SortedStorage() {
-    System.out.println(storage.sortGroceries());
+    System.out.println(storage.toString(true));
   }
 
   private void FindGroceryInStorage() {
@@ -159,7 +160,8 @@ public class AppUI {
   }
 
   private void ViewExpiredGroceries() {
-    System.out.println(storage.moveToExpiredGroceries());
+    System.out.println(storage.DisplayExpiredGroceries());
+    storage.removeExpiredGroceries();
   }
 
   private void TotalValueOfExpiredGroceries() {
@@ -167,53 +169,67 @@ public class AppUI {
   }
 
   private void ShowStorage() {
-    System.out.println(storage);
+    System.out.println(storage.toString(false));
   }
 
   private void init() {
     storage = new FoodStorage();
-
+    //TODO: ADD METHOD SO THAT LARGER QUANTITIES USE "KG", SMALLER USE "g"
     //DUMMY VALUES----------------
     List<Grocery> groceryList = List.of(
-        new Grocery("Milk", 15.0, 1.0, "l", LocalDate.of(2024, 12, 21)),
-        new Grocery("Milk", 15.0, 1.0, "l", LocalDate.of(2024, 12, 21)),
-        new Grocery("Milk", 15.0, 1.0, "l", LocalDate.of(2024, 12, 21)),
-        new Grocery("Milk", 15.0, 2.0, "l", LocalDate.of(2024, 11, 25)),
-        new Grocery("Milk", 15.0, 1.5, "l", LocalDate.of(2024, 12, 15)),
+        new Grocery("Milk", 15.0, 12.0, "l", LocalDate.of(2024, 12, 21)),   // 1L = 1000g
+        new Grocery("Milk", 15.0, 10.0, "l", LocalDate.of(2024, 12, 21)),
+        new Grocery("Milk", 15.0, 12.0, "l", LocalDate.of(2024, 12, 21)),
+        new Grocery("Milk", 15.0, 8.0, "l", LocalDate.of(2024, 11, 25)),   // 2L = 2000g
+        new Grocery("Milk", 15.0, 5.0, "l", LocalDate.of(2024, 12, 15)),   // 1.5L = 1500g
 
-        new Grocery("Bread", 25.0, 1.0, "stk", LocalDate.of(2024, 11, 25)),
-        new Grocery("Bread", 25.0, 2.0, "stk", LocalDate.of(2024, 11, 28)),
-        new Grocery("Bread", 25.0, 1.0, "stk", LocalDate.of(2024, 12, 1)),
+        // Bread
+        new Grocery("Bread", 25.0, 1000.0, "g", LocalDate.of(2024, 11, 25)),   // 1 loaf = 1000g
+        new Grocery("Bread", 25.0, 2000.0, "g", LocalDate.of(2024, 11, 28)),   // 2 loaves = 2000g
+        new Grocery("Bread", 25.0, 1000.0, "g", LocalDate.of(2024, 12, 1)),
 
-        new Grocery("Eggs", 5.0, 12.0, "stk", LocalDate.of(2024, 12, 15)),
+        // Eggs
+        new Grocery("Eggs", 5.0, 12.0, "stk", LocalDate.of(2024, 12, 15)),    // Quantity in number of eggs, no change needed
         new Grocery("Eggs", 5.0, 6.0, "stk", LocalDate.of(2024, 12, 5)),
 
-        new Grocery("Chicken", 150.0, 1.0, "kg", LocalDate.of(2024, 11, 30)),
-        new Grocery("Chicken", 150.0, 2.0, "kg", LocalDate.of(2024, 12, 10)),
+        // Chicken
+        new Grocery("Chicken", 150.0, 1000.0, "g", LocalDate.of(2024, 11, 30)), // 1kg = 1000g
+        new Grocery("Chicken", 150.0, 2000.0, "g", LocalDate.of(2024, 12, 10)), // 2kg = 2000g
 
-        new Grocery("Rice", 20.0, 5.0, "kg", LocalDate.of(2025, 1, 10)),
+        // Rice
+        new Grocery("Rice", 20.0, 5000.0, "g", LocalDate.of(2025, 1, 10)),  // 5kg = 5000g
 
-        new Grocery("Apples", 30.0, 3.0, "kg", LocalDate.of(2024, 11, 28)),
-        new Grocery("Apples", 30.0, 1.5, "kg", LocalDate.of(2024, 12, 5)),
+        // Apples
+        new Grocery("Apples", 30.0, 3000.0, "g", LocalDate.of(2024, 11, 28)), // 3kg = 3000g
+        new Grocery("Apples", 30.0, 1500.0, "g", LocalDate.of(2024, 12, 5)),  // 1.5kg = 1500g
 
-        new Grocery("Bananas", 20.0, 2.0, "kg", LocalDate.of(2024, 11, 30)),
+        // Bananas
+        new Grocery("Bananas", 20.0, 2000.0, "g", LocalDate.of(2024, 11, 30)), // 2kg = 2000g
 
-        new Grocery("Cheese", 80.0, 1.0, "kg", LocalDate.of(2025, 3, 10)),
+        // Cheese
+        new Grocery("Cheese", 80.0, 1000.0, "g", LocalDate.of(2025, 3, 10)),  // 1kg = 1000g
 
-        new Grocery("Butter", 50.0, 0.5, "kg", LocalDate.of(2025, 5, 20)),
+        // Butter
+        new Grocery("Butter", 50.0, 500.0, "g", LocalDate.of(2025, 5, 20)),  // 0.5kg = 500g
 
-        new Grocery("Yogurt", 10.0, 0.5, "l", LocalDate.of(2024, 12, 1)),
-        new Grocery("Yogurt", 10.0, 1.0, "l", LocalDate.of(2024, 12, 10)),
+        // Yogurt
+        new Grocery("Yogurt", 10.0, 500.0, "g", LocalDate.of(2024, 12, 1)),  // 0.5L = 500g
+        new Grocery("Yogurt", 10.0, 1000.0, "g", LocalDate.of(2024, 12, 10)), // 1L = 1000g
 
-        new Grocery("Potatoes", 15.0, 10.0, "kg", LocalDate.of(2025, 2, 15)),
+        // Potatoes
+        new Grocery("Potatoes", 15.0, 10000.0, "g", LocalDate.of(2025, 2, 15)), // 10kg = 10000g
 
-        new Grocery("Carrots", 12.0, 5.0, "kg", LocalDate.of(2025, 1, 5)),
+        // Carrots
+        new Grocery("Carrots", 12.0, 5000.0, "g", LocalDate.of(2025, 1, 5)),  // 5kg = 5000g
 
-        new Grocery("Sugar", 25.0, 2.0, "kg", LocalDate.of(2025, 6, 1)),
+        // Sugar
+        new Grocery("Sugar", 25.0, 2000.0, "g", LocalDate.of(2025, 6, 1)),  // 2kg = 2000g
 
-        new Grocery("Salt", 10.0, 1.0, "kg", LocalDate.of(2026, 1, 1)),
+        // Salt
+        new Grocery("Salt", 10.0, 1000.0, "g", LocalDate.of(2026, 1, 1)),  // 1kg = 1000g
 
-        new Grocery("Flour", 40.0, 3.0, "kg", LocalDate.of(2025, 7, 30))
+        // Flour
+        new Grocery("Flour", 40.0, 3000.0, "g", LocalDate.of(2025, 7, 30))  // 3kg = 3000g
     );
 
     for (Grocery g : groceryList) {
