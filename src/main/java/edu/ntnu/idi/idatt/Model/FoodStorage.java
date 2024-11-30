@@ -54,7 +54,7 @@ public class FoodStorage {
 
     // Use streams to check if there's an existing grocery item with the same expiry date.
     groceries.stream()
-        .filter(g -> g.getExpiryDate().equals(groceryToAdd.getExpiryDate()))
+        .filter(g -> g.getExpiryDate().equals(groceryToAdd.getExpiryDate()) && g.getUnit().equals(groceryToAdd.getUnit()))
         .findFirst()
         .ifPresentOrElse(
             existingGrocery -> existingGrocery.increaseAmount(groceryToAdd.getAmount()),
@@ -298,7 +298,7 @@ public class FoodStorage {
         sb.append(String.format("%-20s %.2f %-12s %-1s\n",
             grocery.getName(),
             grocery.getAmount(),
-            grocery.getUnit(),
+            UnitConverter.getStandarUnit(grocery.getUnit()), //Converts to standard unit for display
             dateFormat.format(grocery.getExpiryDate())));
       }
       sb.append("---------------------------------------------------\n");
