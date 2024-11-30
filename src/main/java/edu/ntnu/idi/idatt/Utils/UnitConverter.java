@@ -14,6 +14,19 @@ public class UnitConverter {
       default: throw new IllegalArgumentException("Unsupported unit: " + unit);
     }
   }
+
+  public static String getStandarUnit(String unit) {
+    switch (unit.toLowerCase()) {
+      case "ml": return "l";
+      case "dl": return "l";
+      case "mg": return "g";
+      case "kg": return "g";
+      case "g": return "g";
+      case "l": return "l";
+      case "stk": return "stk";
+      default: throw new IllegalArgumentException("Unsupported unit: " + unit);
+    }
+  }
 }
 
 
