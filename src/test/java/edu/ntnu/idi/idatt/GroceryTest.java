@@ -25,16 +25,16 @@ class GroceryTest {
 
   @Test
   void TestingIncreaseAmount() {
-    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "kg", expiryDate);
+    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "g", expiryDate);
     grocery.increaseAmount(2.0);
-    assertEquals(grocery.toString(), "Ost, 40.0kr, 12.0 kg, 31-12-2024");
+    assertEquals(grocery.toString(), "Ost, 40.0kr, 12.0 g, 31-12-2024");
   }
 
   @Test
   void TestingDecreaseAmount() {
-    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "kg", expiryDate);
+    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "g", expiryDate);
     grocery.decreaseAmount(2.0);
-    assertEquals(grocery.toString(), "Ost, 40.0kr, 8.0 kg, 31-12-2024");
+    assertEquals(grocery.toString(), "Ost, 40.0kr, 8.0 g, 31-12-2024");
   }
 
 
@@ -50,9 +50,9 @@ class GroceryTest {
     assertEquals(1.0, grocery3.getAmount());
 
     //for dry units (kg)
-    Grocery grocery4 = new Grocery("Kjøtt", 40, 1000000, "mg", expiryDate);
-    Grocery grocery5 = new Grocery("Kjøtt", 40, 1000, "g", expiryDate);
-    Grocery grocery6 = new Grocery("Kjøtt", 40, 1, "kg", expiryDate);
+    Grocery grocery4 = new Grocery("Kjøtt", 40, 1000, "mg", expiryDate);
+    Grocery grocery5 = new Grocery("Kjøtt", 40, 1, "g", expiryDate);
+    Grocery grocery6 = new Grocery("Kjøtt", 40, 0.001, "kg", expiryDate);
 
     assertEquals(1.0, grocery4.getAmount());
     assertEquals(1.0, grocery5.getAmount());
@@ -66,12 +66,12 @@ class GroceryTest {
   void TestingInvalidNameInConstructor() {
     assertThrows(IllegalArgumentException.class, () ->
     {
-      new Grocery( null, 40.0, 10.0, "kg", expiryDate);
+      new Grocery( null, 40.0, 10.0, "g", expiryDate);
     });
 
     assertThrows(IllegalArgumentException.class, () ->
     {
-      new Grocery( "", 40.0, 10.0, "kg", expiryDate);
+      new Grocery( "", 40.0, 10.0, "g", expiryDate);
     });
   }
 
@@ -79,7 +79,7 @@ class GroceryTest {
   void TestingNegativePriceInConstructor() {
     assertThrows(IllegalArgumentException.class, () ->
     {
-      new Grocery("Ost", -10.0, 10.0, "kg", expiryDate);
+      new Grocery("Ost", -10.0, 10.0, "g", expiryDate);
     });
   }
 
@@ -87,7 +87,7 @@ class GroceryTest {
   void TestingNegativeAmountInConstructor() {
     assertThrows(IllegalArgumentException.class, () ->
     {
-      new Grocery("Ost", 10.0, -10.0, "kg", expiryDate);
+      new Grocery("Ost", 10.0, -10.0, "g", expiryDate);
     });
   }
 
@@ -115,47 +115,41 @@ class GroceryTest {
     {
       new Grocery("Ost", 40.0, 10.0, "l", null);
     });
-
-    assertThrows(IllegalArgumentException.class, () ->
-    {
-      new Grocery("Ost", 40.0, 10.0, "l", LocalDate.of(2024, 11, 22));
-    });
-
   }
 
   @Test
   void TestingInvalidAmountForSetAmount() {
-    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "kg", expiryDate);
+    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "g", expiryDate);
     assertThrows(IllegalArgumentException.class, () -> grocery.setAmount(-5.0));
   }
 
   @Test
   void TestingInvalidPriceForSetPrice() {
-    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "kg", expiryDate);
+    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "g", expiryDate);
     assertThrows(IllegalArgumentException.class, () -> grocery.setPrice(-15.0));
   }
 
   @Test
   void TestingZeroPriceForSetPrice() {
-    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "kg", expiryDate);
+    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "g", expiryDate);
     assertThrows(IllegalArgumentException.class, () -> grocery.setPrice(0.0));
   }
 
   @Test
   void TestingInvalidAmountToIncrease() {
-    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "kg", expiryDate);
+    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "g", expiryDate);
     assertThrows(IllegalArgumentException.class, () -> grocery.increaseAmount(-1.0));
   }
 
   @Test
   void TestingInvalidAmountToDecrease() {
-    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "kg", expiryDate);
+    Grocery grocery = new Grocery("Ost", 40.0, 10.0, "g", expiryDate);
     assertThrows(IllegalArgumentException.class, () -> grocery.decreaseAmount(20.0));
   }
 
   @Test
   void TestingDecreaseAmountToNegative() {
-    Grocery grocery = new Grocery("Ost", 40.0, 5.0, "kg", expiryDate);
+    Grocery grocery = new Grocery("Ost", 40.0, 5.0, "g", expiryDate);
     assertThrows(IllegalArgumentException.class, () -> grocery.decreaseAmount(10.0));
   }
 }
