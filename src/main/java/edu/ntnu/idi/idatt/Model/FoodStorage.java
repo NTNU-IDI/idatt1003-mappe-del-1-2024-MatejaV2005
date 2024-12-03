@@ -27,7 +27,7 @@ public class FoodStorage {
   /**
    * A map to store the expired groceries by their name, where each grocery name maps to a list of grocery items.
    */
-  Map<String, List<Grocery>> expiredGroceries = new HashMap<>(); // Map to hold expired groceries
+  Map<String, List<Grocery>> expiredStorage = new HashMap<>(); // Map to hold expired groceries
 
 
   /**
@@ -127,28 +127,37 @@ public class FoodStorage {
   }
 
   /**
-   * Checks if a specific grocery exists in the storage.
+   * Searches for a specific grocery in either the main storage or expired storage based on the provided flag.
    * <p>
-   * Searches through all stored groceries to find a match based on the provided grocery's details.
+   * If the grocery is found, it prints a message indicating whether it was found in the main storage or expired storage.
+   * If no matching grocery is found, a "not found" message is printed.
+   * </p>
    *
-   * @param groceryName the grocery to check for in the storage
-   * @return all the items of the matching grocery name if found.
-   *         otherwise returns a message to inform if no match exists.
+   * @param groceryName the name of the grocery to search for.
+   * @param searchExpired a boolean indicating whether to search in expired storage (true) or main storage (false).
+   * @return a list of matching groceries from the selected storage. If no matches are found, an empty list is returned.
    */
-  public List<Grocery> inStorage(String groceryName) {
+  public List<Grocery> findInStorage(String groceryName, boolean searchExpired) {
     ExceptionHandling.validateName(groceryName);
 
-    String key = groceryName.toLowerCase(); // Convert to lowercase for case-insensitive comparison
-    List<Grocery> foundGroceries = storage.getOrDefault(key, new ArrayList<>());
+    String key = groceryName.toLowerCase(); // Case-insensitive comparison
+    Map<String, List<Grocery>> targetStorage = searchExpired ? expiredStorage : storage;
 
+    List<Grocery> foundGroceries = targetStorage.getOrDefault(key, new ArrayList<>());
+
+    // Check which storage was used and print appropriate message
     if (foundGroceries.isEmpty()) {
-      // Log a clear message if no groceries are found
       System.out.println("Grocery not found: " + groceryName);
     } else {
-      // Print found groceries for clarity
-      System.out.println("Found groceries for |" + groceryName + "|:");
+      if (targetStorage == expiredStorage) {
+        System.out.println("Found expired groceries for |" + groceryName + "|:");
+      } else {
+        System.out.println("Found groceries in storage for |" + groceryName + "|:");
+      }
+
       System.out.println("--------------------------------------------");
-      foundGroceries.forEach(g -> System.out.println(g));
+      foundGroceries.forEach(System.out::println);
+      System.out.println();
     }
 
     return foundGroceries;
@@ -235,7 +244,7 @@ public class FoodStorage {
    *
    * @return a map where keys are grocery names (in lowercase) and values are lists of expired groceries.
    */
-  //TODO: TRY TO SPLIT UP METHOD MORE
+
   public Map<String, List<Grocery>> FilterAndGroupExpiredGroceries() {
     List<Grocery> listOfExpiredGroceries = new ArrayList<>(); // Temporary list to store expired groceries
 
@@ -245,10 +254,14 @@ public class FoodStorage {
         .forEach(listOfExpiredGroceries::add);
 
     listOfExpiredGroceries.forEach(grocery -> {
-      expiredGroceries.computeIfAbsent(grocery.getName().toLowerCase(), k -> new ArrayList<>()).add(grocery); // Convert name to lowercase
+      expiredStorage.computeIfAbsent(grocery.getName().toLowerCase(), k -> new ArrayList<>()).add(grocery); // Convert name to lowercase
     });
 
-    return expiredGroceries;
+    if (listOfExpiredGroceries.isEmpty()) {
+      System.out.println("No expired groceries in this storage");
+    }
+
+    return expiredStorage;
   }
 
   /**
@@ -298,7 +311,7 @@ public class FoodStorage {
         sb.append(String.format("%-20s %.2f %-12s %-1s\n",
             grocery.getName(),
             grocery.getAmount(),
-            UnitConverter.getStandarUnit(grocery.getUnit()), //Converts to standard unit for display
+            UnitConverter.getStandardUnit(grocery.getUnit()), //Converts to standard unit for display
             dateFormat.format(grocery.getExpiryDate())));
       }
       sb.append("---------------------------------------------------\n");
@@ -337,7 +350,7 @@ public class FoodStorage {
 
 
   /**
-   * Helper method for testing
+   * Helper method for getting specific groceries as a list
    * Retrieves a list of groceries from storage based on the given name.
    * <p>
    * This method returns a list of groceries associated with the specified name.
