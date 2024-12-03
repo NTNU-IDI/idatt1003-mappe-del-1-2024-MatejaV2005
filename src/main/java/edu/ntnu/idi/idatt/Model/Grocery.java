@@ -14,7 +14,7 @@ public class Grocery {
   private final String name;
   private double amount;
   private double price;
-  private final String unit;
+  private String unit;
   public final LocalDate expiryDate; // LOCALDATE IS IMMUTABLE
 
   /**
@@ -30,8 +30,6 @@ public class Grocery {
    */
   public Grocery(String name, double price, double amount, String unit, LocalDate expiryDate) {
     ExceptionHandling.validateName(name);
-    ExceptionHandling.validatePrice(price);
-    ExceptionHandling.validateAmount(amount);
     ExceptionHandling.validateUnit(unit);
     ExceptionHandling.validateExpiryDate(expiryDate);
 
@@ -43,48 +41,22 @@ public class Grocery {
   }
 
   // GET methods -------------------------
-
-  /**
-   * Gets the name of the grocery item.
-   *
-   * @return the name of the grocery item
-   */
   public String getName() {
     return name;
   }
 
-  /**
-   * Gets the amount of the grocery item in the specified unit.
-   *
-   * @return the amount of the grocery item
-   */
   public Double getAmount() {
     return amount;
   }
 
-  /**
-   * Gets the price of the grocery item.
-   *
-   * @return the price of the grocery item
-   */
   public double getPrice() {
     return price;
   }
 
-  /**
-   * Gets the unit of the grocery item (e.g., "g", "kg", "stk").
-   *
-   * @return the unit of the grocery item
-   */
   public String getUnit() {
     return unit;
   }
 
-  /**
-   * Gets the expiry date of the grocery item.
-   *
-   * @return the expiry date of the grocery item
-   */
   public LocalDate getExpiryDate() {
     return expiryDate;
   }
@@ -99,8 +71,13 @@ public class Grocery {
    */
   public void setAmount(double amount) {
     ExceptionHandling.validateAmount(amount);
-    this.amount = UnitConverter.ConvertUnitAmount(amount, unit);
+    // Convert the amount to the standard unit (grams or liters)
+    double convertedAmount = UnitConverter.convertToStandardUnit(amount, unit);
+    this.amount = convertedAmount;
+
+    this.unit = UnitConverter.getStandardUnit(unit);
   }
+
 
   /**
    * Sets the price of the grocery item.

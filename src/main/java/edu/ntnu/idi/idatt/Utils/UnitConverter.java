@@ -15,18 +15,22 @@ public class UnitConverter {
     }
   }
 
-  public static String getStandarUnit(String unit) {
+  public static String getStandardUnit(String unit) {
     switch (unit.toLowerCase()) {
       case "ml": return "l";
       case "dl": return "l";
       case "mg": return "g";
       case "kg": return "g";
-      case "g": return "g";
-      case "l": return "l";
-      case "stk": return "stk";
+      case "g": return "g";  // Standardize weight to grams
+      case "l": return "l";  // Standardize volume to liters
+      case "stk": return "stk";  // Stock items stay as they are
       default: throw new IllegalArgumentException("Unsupported unit: " + unit);
     }
   }
+
+  // Converts the amount to its standard unit (g for weight, l for volume)
+  public static double convertToStandardUnit(double amount, String unit) {
+    String standardUnit = getStandardUnit(unit);
+    return ConvertUnitAmount(amount, unit);  // Convert to the standardized unit
+  }
 }
-
-
