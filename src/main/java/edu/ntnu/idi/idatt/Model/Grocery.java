@@ -11,41 +11,38 @@ import java.time.format.DateTimeFormatter;
  * Includes functionality to check if the grocery is expired and to format the item as a string.
  */
 public class Grocery {
+
   private final String name;
   private double amount;
   private double price;
-  private String unit;
-  public final LocalDate expiryDate; // LOCALDATE IS IMMUTABLE
+  private final String unit;
+  private final LocalDate expiryDate; // Immutable field to ensure safety
 
   /**
    * Constructs a new Grocery object with the specified details.
    *
-   * @param name      the name of the grocery item (e.g., "Milk", "Bread")
-   * @param price     the price of the grocery item (e.g., 10.50)
-   * @param amount    the amount of the grocery item (e.g., 1000 for 1000 grams)
-   * @param unit      the unit of measurement for the amount (e.g., "g", "kg", "stk")
+   * @param name       the name of the grocery item (e.g., "Milk", "Bread")
+   * @param price      the price of the grocery item (e.g., 10.50)
+   * @param amount     the amount of the grocery item (e.g., 1000 for 1000 grams)
+   * @param unit       the unit of measurement for the amount (e.g., "g", "kg", "stk")
    * @param expiryDate the expiry date of the grocery item
-   *
-   * @throws IllegalArgumentException if any of the parameters are invalid (e.g., invalid name, price, or unit)
+   * @throws IllegalArgumentException if any of the parameters are invalid
    */
   public Grocery(String name, double price, double amount, String unit, LocalDate expiryDate) {
-    ExceptionHandling.validateName(name);
-    ExceptionHandling.validateUnit(unit);
-    ExceptionHandling.validateExpiryDate(expiryDate);
-
-    this.name = name;
-    setPrice(price);
-    this.unit = unit;
-    setAmount(amount);
-    this.expiryDate = expiryDate;
+    this.name = validateAndSetName(name);
+    this.price = validateAndSetPrice(price);
+    this.unit = validateAndSetUnit(unit);
+    this.amount = validateAndSetAmount(amount, unit);
+    this.expiryDate = validateAndSetExpiryDate(expiryDate);
   }
 
-  // GET methods -------------------------
+  // Getters -----------------------------------------
+
   public String getName() {
     return name;
   }
 
-  public Double getAmount() {
+  public double getAmount() {
     return amount;
   }
 
@@ -61,41 +58,41 @@ public class Grocery {
     return expiryDate;
   }
 
-  // SET methods -------------------------
+  // Private Validation and Setting Methods -----------------------------------------
 
-  /**
-   * Sets the amount of the grocery item, converting the amount to the correct unit.
-   *
-   * @param amount the amount of the grocery item in the specified unit
-   * @throws IllegalArgumentException if the amount is invalid
-   */
-  public void setAmount(double amount) {
-    ExceptionHandling.validateAmount(amount);
-    // Convert the amount to the standard unit (grams or liters)
-    double convertedAmount = UnitConverter.convertToStandardUnit(amount, unit);
-    this.amount = convertedAmount;
-
-    this.unit = UnitConverter.getStandardUnit(unit);
+  private String validateAndSetName(String name) {
+    ExceptionHandling.validateName(name); // Validates name
+    return name; // Returns validated name
   }
 
-
-  /**
-   * Sets the price of the grocery item.
-   *
-   * @param price the price of the grocery item
-   * @throws IllegalArgumentException if the price is invalid
-   */
-  public void setPrice(double price) {
-    ExceptionHandling.validatePrice(price);
-    this.price = price;
+  private double validateAndSetPrice(double price) {
+    ExceptionHandling.validatePrice(price); // Validates price
+    return price; // Returns validated price
   }
+
+  private String validateAndSetUnit(String unit) {
+    ExceptionHandling.validateUnit(unit); // Validates unit
+    return UnitConverter.getStandardUnit(unit); // Converts to a standard unit
+  }
+
+  private double validateAndSetAmount(double amount, String unit) {
+    ExceptionHandling.validateAmount(amount); // Validates amount
+    return UnitConverter.convertToStandardUnit(amount, unit); // Converts to a standardized amount
+  }
+
+  private LocalDate validateAndSetExpiryDate(LocalDate expiryDate) {
+    ExceptionHandling.validateExpiryDate(expiryDate); // Validates expiry date
+    return expiryDate; // Returns validated expiry date
+  }
+
+  //---------------------------------------------------------------------------
 
   /**
    * Checks if the grocery item is expired based on the current date and the expiry date.
    *
    * @return {@code true} if the grocery item is expired, otherwise {@code false}
    */
-  public Boolean isExpired() {
+  public boolean isExpired() {
     LocalDate currentDate = LocalDate.now(); // Gets the current date
     return currentDate.isAfter(expiryDate); // Returns true if expired
   }
