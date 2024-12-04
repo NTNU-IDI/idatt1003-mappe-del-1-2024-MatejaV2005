@@ -60,26 +60,63 @@ public class Grocery {
 
   // Private Validation and Setting Methods -----------------------------------------
 
+  /**
+   * Validates and sets the name of the grocery.
+   *
+   * @param name the name of the grocery to validate and set
+   * @return the validated name
+   * @throws IllegalArgumentException if the name is invalid
+   */
   private String validateAndSetName(String name) {
     ExceptionHandling.validateName(name); // Validates name
     return name; // Returns validated name
   }
 
-  private double validateAndSetPrice(double price) {
+  /**
+   * Validates and sets the price of the grocery.
+   *
+   * @param price the price of the grocery to validate and set
+   * @return the validated price
+   * @throws IllegalArgumentException if the price is invalid
+   */
+  public double validateAndSetPrice(double price) {
     ExceptionHandling.validatePrice(price); // Validates price
     return price; // Returns validated price
   }
 
-  private String validateAndSetUnit(String unit) {
+  /**
+   * Validates and sets the unit of the grocery.
+   *
+   * @param unit the unit of the grocery to validate and set
+   * @return the standardized unit after validation
+   * @throws IllegalArgumentException if the unit is invalid
+   */
+  public String validateAndSetUnit(String unit) {
     ExceptionHandling.validateUnit(unit); // Validates unit
     return UnitConverter.getStandardUnit(unit); // Converts to a standard unit
   }
 
-  private double validateAndSetAmount(double amount, String unit) {
+  /**
+   * Validates and sets the amount of the grocery.
+   * The amount is converted to its standardized unit (e.g., grams or liters).
+   *
+   * @param amount the amount of the grocery to validate and set
+   * @param unit the unit of the amount to assist in conversion
+   * @return the standardized amount after validation
+   * @throws IllegalArgumentException if the amount is invalid
+   */
+  public double validateAndSetAmount(double amount, String unit) {
     ExceptionHandling.validateAmount(amount); // Validates amount
     return UnitConverter.convertToStandardUnit(amount, unit); // Converts to a standardized amount
   }
 
+  /**
+   * Validates and sets the expiry date of the grocery.
+   *
+   * @param expiryDate the expiry date to validate and set
+   * @return the validated expiry date
+   * @throws IllegalArgumentException if the expiry date is invalid
+   */
   private LocalDate validateAndSetExpiryDate(LocalDate expiryDate) {
     ExceptionHandling.validateExpiryDate(expiryDate); // Validates expiry date
     return expiryDate; // Returns validated expiry date
