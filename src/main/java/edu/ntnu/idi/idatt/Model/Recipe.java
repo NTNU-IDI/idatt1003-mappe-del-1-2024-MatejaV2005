@@ -14,7 +14,7 @@ public class Recipe {
   private final String nameOfRecipe;
   private final String description;
   private final String process;
-  private Map<String, Double> ingredients;
+  private Map<String, IngredientDetail> ingredients;
   public FoodStorage storage;
 
   /**
@@ -26,7 +26,7 @@ public class Recipe {
    * @param ingredients  a map of ingredients required for the recipe, where the key is the ingredient name,
    *                     and the value is the required amount
    */
-  public Recipe(String nameOfRecipe, String description, String process, Map<String, Double> ingredients) {
+  public Recipe(String nameOfRecipe, String description, String process, Map<String, IngredientDetail> ingredients) {
     ExceptionHandling.validateName(nameOfRecipe);
     ExceptionHandling.validateName(description);
     ExceptionHandling.validateName(process);
@@ -72,7 +72,7 @@ public class Recipe {
    *
    * @return a map of ingredients, where the key is the ingredient name, and the value is the required amount
    */
-  public Map<String, Double> getIngredients() {
+  public Map<String, IngredientDetail> getIngredients() {
     return ingredients;
   }
 
@@ -83,22 +83,25 @@ public class Recipe {
    * @param ingredients a map of ingredients, where the key is the ingredient name, and the value is the required amount
    * @return the validated ingredients map
    */
-  private Map<String, Double> setIngredients(Map<String, Double> ingredients) {
+  private Map<String, IngredientDetail> setIngredients(Map<String, IngredientDetail> ingredients) {
     return ingredients;
+  }
+
+  public FoodStorage setStorage(FoodStorage storage) {
+    this.storage = storage;
+    return storage;
   }
 
   // Methods ------------------------------------------
 
   /**
-   * Checks if there are enough ingredients available in the {@link FoodStorage} to prepare the recipe.
-   * It prints the result, listing any insufficient ingredients by name.
+   * Retrieves a list of ingredients that are insufficient in the storage.
    *
-   * @param ingredients the map of required ingredients, where the key is the ingredient name,
-   *                    and the value is the required amount
+   * @param ingredients the map of required ingredients with their amounts
+   * @return a list of ingredient names that are missing or insufficient
    */
-  public void enoughIngredientsInStorage(Map<String, Double> ingredients) {
-    // Filter out ingredients that are insufficient
-    List<String> insufficientIngredients = ingredients.entrySet().stream()
+  public List<String> getMissingIngredients(Map<String, Double> ingredients) {
+    return ingredients.entrySet().stream()
         .filter(entry -> {
           String name = entry.getKey();
           Double requiredAmount = entry.getValue();
@@ -110,13 +113,25 @@ public class Recipe {
         })
         .map(Map.Entry::getKey) // Extract the name of the ingredient
         .toList(); // Collect as a list
+  }
 
-    if (insufficientIngredients.isEmpty()) {
-      System.out.println("You have enough ingredients to make: " + nameOfRecipe);
-    } else {
-      System.out.println("You do not have enough of the following ingredients:");
-      insufficientIngredients.forEach(System.out::println); // Print each insufficient ingredient
+  public boolean canMakeRecipe() {
+    // Iterate over all ingredients in the recipe
+    for (Map.Entry<String, IngredientDetail> entry : ingredients.entrySet()) {
+      String ingredientName = entry.getKey();
+      IngredientDetail requiredDetail = entry.getValue();
+
+      // Sum up the total amount of this ingredient in storage
+      double availableAmount = storage.getGroceriesByName(ingredientName).stream()
+          .mapToDouble(Grocery::getAmount)
+          .sum();
+
+      // Check if available amount is less than the required amount
+      if (availableAmount < requiredDetail.getAmount()) {
+        return false; // Not enough of this ingredient
+      }
     }
+    return true; // All ingredients are sufficient
   }
 
   /**
@@ -147,7 +162,7 @@ public class Recipe {
     ingredientsTable.append(String.format("%s%n", "-".repeat(33)));
 
     // Legg til ingredienser i tabellformat
-    for (Map.Entry<String, Double> entry : ingredients.entrySet()) {
+    for (Map.Entry<String, IngredientDetail> entry : ingredients.entrySet()) {
       ingredientsTable.append(String.format("%-20s | %-10.2f%n", entry.getKey(), entry.getValue()));
     }
 
