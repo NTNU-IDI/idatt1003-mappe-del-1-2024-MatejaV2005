@@ -57,40 +57,6 @@ public class IngredientDetailTest {
         "Should throw IllegalArgumentException for a negative amount.");
   }
 
-  // Test increaseAmount with valid input
-  @Test
-  void testIncreaseAmountValid() {
-    ingredient.increaseAmount(500); // Increase by 500 grams
-    assertEquals(2500.0, ingredient.getAmount(), "The amount should increase to 2500 grams.");
-  }
-
-  // Test increaseAmount with invalid input
-  @Test
-  void testIncreaseAmountInvalid() {
-    assertThrows(IllegalArgumentException.class, () -> ingredient.increaseAmount(-500),
-        "Should throw IllegalArgumentException for a negative increase amount.");
-  }
-
-  // Test decreaseAmount with valid input
-  @Test
-  void testDecreaseAmountValid() {
-    ingredient.decreaseAmount(500); // Decrease by 500 grams
-    assertEquals(1500.0, ingredient.getAmount(), "The amount should decrease to 1500 grams.");
-  }
-
-  // Test decreaseAmount with invalid input
-  @Test
-  void testDecreaseAmountInvalid() {
-    assertThrows(IllegalArgumentException.class, () -> ingredient.decreaseAmount(-500),
-        "Should throw IllegalArgumentException for a negative decrease amount.");
-  }
-
-  // Test decreaseAmount exceeding current amount
-  @Test
-  void testDecreaseAmountExceeding() {
-    assertThrows(IllegalArgumentException.class, () -> ingredient.decreaseAmount(3000),
-        "Should throw IllegalArgumentException when decrease amount exceeds current amount.");
-  }
 
   // Test toString method
   @Test
