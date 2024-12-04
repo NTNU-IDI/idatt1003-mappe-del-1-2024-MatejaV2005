@@ -18,7 +18,7 @@ class GroceryTest {
   void setUp() {
     expiryDate = LocalDate.of(2024, 12, 31);
 
-    // Initialiser vanlige Grocery-objekter
+    // Initialize Grocery objects
     milk = new Grocery("Melk", 35.0, 3.0, "l", expiryDate);
     cheese = new Grocery("Ost", 40.0, 10.0, "g", expiryDate);
     meat = new Grocery("Kjøtt", 125.0, 10.0, "l", expiryDate);
@@ -28,29 +28,29 @@ class GroceryTest {
 
   @Test
   void testingTheToStringFunction() {
-    assertEquals(meat.toString(), "Kjøtt, 125.0kr, 10.0 l, 31-12-2024");
+    assertEquals("Kjøtt, 125.0kr, 10.0 l, 31-12-2024", meat.toString());
   }
 
   @Test
-  void TestingIsExpired() {
+  void testingIsExpired() {
     assertFalse(milk.isExpired());
   }
 
   @Test
-  void TestingIncreaseAmount() {
+  void testingIncreaseAmount() {
     cheese.increaseAmount(2.0);
-    assertEquals(cheese.toString(), "Ost, 40.0kr, 12.0 g, 31-12-2024");
+    assertEquals("Ost, 40.0kr, 12.0 g, 31-12-2024", cheese.toString());
   }
 
   @Test
-  void TestingDecreaseAmount() {
+  void testingDecreaseAmount() {
     cheese.decreaseAmount(2.0);
-    assertEquals(cheese.toString(), "Ost, 40.0kr, 8.0 g, 31-12-2024");
+    assertEquals("Ost, 40.0kr, 8.0 g, 31-12-2024", cheese.toString());
   }
 
   @Test
-  void TestingUnitConversion() {
-    // for liquid units (l)
+  void testingUnitConversion() {
+    // For liquid units (l)
     Grocery grocery1 = new Grocery("Melk", 40, 1000, "ml", expiryDate);
     Grocery grocery2 = new Grocery("Melk", 40, 10, "dl", expiryDate);
     Grocery grocery3 = new Grocery("Melk", 40, 1, "l", expiryDate);
@@ -59,7 +59,7 @@ class GroceryTest {
     assertEquals(1.0, grocery2.getAmount());
     assertEquals(1.0, grocery3.getAmount());
 
-    // for dry units (kg)
+    // For dry units (kg)
     Grocery grocery4 = new Grocery("Kjøtt", 40, 1000, "mg", expiryDate);
     Grocery grocery5 = new Grocery("Kjøtt", 40, 1, "g", expiryDate);
     Grocery grocery6 = new Grocery("Kjøtt", 40, 0.001, "kg", expiryDate);
@@ -69,10 +69,10 @@ class GroceryTest {
     assertEquals(1.0, grocery6.getAmount());
   }
 
-  // NEGATIVE TESTS --------------------------------------------------------------------------
+  // NEGATIVE TESTS -----------------------------------------------------------------
 
   @Test
-  void TestingInvalidNameInConstructor() {
+  void testingInvalidNameInConstructor() {
     assertThrows(IllegalArgumentException.class, () ->
         new Grocery(null, 40.0, 10.0, "g", expiryDate));
 
@@ -81,19 +81,19 @@ class GroceryTest {
   }
 
   @Test
-  void TestingNegativePriceInConstructor() {
+  void testingNegativePriceInConstructor() {
     assertThrows(IllegalArgumentException.class, () ->
         new Grocery("Ost", -10.0, 10.0, "g", expiryDate));
   }
 
   @Test
-  void TestingNegativeAmountInConstructor() {
+  void testingNegativeAmountInConstructor() {
     assertThrows(IllegalArgumentException.class, () ->
         new Grocery("Ost", 10.0, -10.0, "g", expiryDate));
   }
 
   @Test
-  void TestingInvalidUnitInConstructor() {
+  void testingInvalidUnitInConstructor() {
     assertThrows(IllegalArgumentException.class, () ->
         new Grocery("Melk", 40.0, 10.0, "ounces", expiryDate));
 
@@ -105,38 +105,44 @@ class GroceryTest {
   }
 
   @Test
-  void TestingInvalidDateInConstructor() {
+  void testingInvalidDateInConstructor() {
     assertThrows(IllegalArgumentException.class, () ->
         new Grocery("Ost", 40.0, 10.0, "l", null));
   }
 
   @Test
-  void TestingInvalidAmountForSetAmount() {
-    assertThrows(IllegalArgumentException.class, () -> cheese.setAmount(-5.0));
+  void testingInvalidAmountForSetAmount() {
+    assertThrows(IllegalArgumentException.class, () ->
+        cheese.validateAndSetAmount(-5.0, cheese.getUnit()));
   }
 
   @Test
-  void TestingInvalidPriceForSetPrice() {
-    assertThrows(IllegalArgumentException.class, () -> cheese.setPrice(-15.0));
+  void testingInvalidPriceForSetPrice() {
+    assertThrows(IllegalArgumentException.class, () ->
+        cheese.validateAndSetPrice(-15.0));
   }
 
   @Test
-  void TestingZeroPriceForSetPrice() {
-    assertThrows(IllegalArgumentException.class, () -> cheese.setPrice(0.0));
+  void testingZeroPriceForSetPrice() {
+    assertThrows(IllegalArgumentException.class, () ->
+        cheese.validateAndSetPrice(0.0));
   }
 
   @Test
-  void TestingInvalidAmountToIncrease() {
-    assertThrows(IllegalArgumentException.class, () -> cheese.increaseAmount(-1.0));
+  void testingInvalidAmountToIncrease() {
+    assertThrows(IllegalArgumentException.class, () ->
+        cheese.increaseAmount(-1.0));
   }
 
   @Test
-  void TestingInvalidAmountToDecrease() {
-    assertThrows(IllegalArgumentException.class, () -> cheese.decreaseAmount(20.0));
+  void testingInvalidAmountToDecrease() {
+    assertThrows(IllegalArgumentException.class, () ->
+        cheese.decreaseAmount(20.0));
   }
 
   @Test
-  void TestingDecreaseAmountToNegative() {
-    assertThrows(IllegalArgumentException.class, () -> cheese.decreaseAmount(15.0));
+  void testingDecreaseAmountToNegative() {
+    assertThrows(IllegalArgumentException.class, () ->
+        cheese.decreaseAmount(15.0));
   }
 }
