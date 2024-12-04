@@ -11,11 +11,11 @@ import java.util.Map;
  */
 public class Recipe {
 
-  private final String nameOfRecipe;
-  private final String description;
-  private final String process;
-  private Map<String, IngredientDetail> ingredients;
-  public FoodStorage storage;
+  private final String nameOfRecipe; // The name of the recipe
+  private final String description; // A brief description of the recipe
+  private final String process; // Step-by-step instructions for the recipe
+  private Map<String, IngredientDetail> ingredients; // Map of ingredient names to their details
+  public FoodStorage storage; // Storage instance for checking available groceries
 
   /**
    * Constructs a Recipe object with the specified details.
@@ -25,6 +25,7 @@ public class Recipe {
    * @param process      the step-by-step cooking process for the recipe
    * @param ingredients  a map of ingredients required for the recipe, where the key is the ingredient name,
    *                     and the value is the required amount
+   * @throws IllegalArgumentException if the name, description, or process are invalid
    */
   public Recipe(String nameOfRecipe, String description, String process, Map<String, IngredientDetail> ingredients) {
     ExceptionHandling.validateName(nameOfRecipe);
@@ -37,8 +38,6 @@ public class Recipe {
     this.ingredients = ingredients;
     this.storage = new FoodStorage();
   }
-
-  // Getters ------------------------------------------
 
   /**
    * Retrieves the name of the recipe.
@@ -76,62 +75,55 @@ public class Recipe {
     return ingredients;
   }
 
-  // Setters ------------------------------------------
   /**
-   * Sets the list of ingredients for the recipe.
+   * Sets the storage instance for the recipe.
+   * This allows the recipe to check available ingredients against the storage.
    *
-   * @param ingredients a map of ingredients, where the key is the ingredient name, and the value is the required amount
-   * @return the validated ingredients map
+   * @param storage the {@link FoodStorage} instance to set
+   * @return the set storage instance
    */
-  private Map<String, IngredientDetail> setIngredients(Map<String, IngredientDetail> ingredients) {
-    return ingredients;
-  }
-
   public FoodStorage setStorage(FoodStorage storage) {
     this.storage = storage;
     return storage;
   }
 
-  // Methods ------------------------------------------
-
   /**
-   * Retrieves a list of ingredients that are insufficient in the storage.
-   *
-   * @param ingredients the map of required ingredients with their amounts
-   * @return a list of ingredient names that are missing or insufficient
+   * Prints the missing ingredients required to make the recipe.
+   * If an ingredient is missing or insufficient, its name, missing amount, and unit are displayed.
    */
-  public List<String> getMissingIngredients(Map<String, Double> ingredients) {
-    return ingredients.entrySet().stream()
-        .filter(entry -> {
-          String name = entry.getKey();
-          Double requiredAmount = entry.getValue();
+  public void getMissingIngredients() {
+    ingredients.forEach((ingredientName, requiredDetail) -> {
+      double availableAmount = storage.getGroceriesByName(ingredientName).stream()
+          .mapToDouble(Grocery::getAmount)
+          .sum();
 
-          // Check if the storage does not have enough of the ingredient
-          return storage.getGroceriesByName(name).stream()
-              .mapToDouble(Grocery::getAmount)
-              .sum() < requiredAmount;
-        })
-        .map(Map.Entry::getKey) // Extract the name of the ingredient
-        .toList(); // Collect as a list
+      if (availableAmount < requiredDetail.getAmount()) {
+        double missingAmount = requiredDetail.getAmount() - availableAmount;
+        System.out.printf("- %s: Missing %.2f %s%n", ingredientName, missingAmount, requiredDetail.getUnit());
+      }
+    });
   }
 
+  /**
+   * Checks if the recipe can be made with the available ingredients in storage.
+   *
+   * @return {@code true} if all required ingredients are available in sufficient quantities, {@code false} otherwise
+   */
   public boolean canMakeRecipe() {
-    // Iterate over all ingredients in the recipe
     for (Map.Entry<String, IngredientDetail> entry : ingredients.entrySet()) {
       String ingredientName = entry.getKey();
       IngredientDetail requiredDetail = entry.getValue();
 
-      // Sum up the total amount of this ingredient in storage
       double availableAmount = storage.getGroceriesByName(ingredientName).stream()
           .mapToDouble(Grocery::getAmount)
           .sum();
 
       // Check if available amount is less than the required amount
       if (availableAmount < requiredDetail.getAmount()) {
-        return false; // Not enough of this ingredient
+        return false;
       }
     }
-    return true; // All ingredients are sufficient
+    return true;
   }
 
   /**
@@ -147,13 +139,13 @@ public class Recipe {
    * Ingredients:
    * Ingredient           | Amount
    * ---------------------------------
-   * Spaghetti            | 200.00
-   * Ground Beef          | 300.00
-   * Tomato Sauce         | 150.00
-   * Onion                | 50.00
+   * Spaghetti            | 200.00 g
+   * Ground Beef          | 300.00 g
+   * Tomato Sauce         | 150.00 ml
+   * Onion                | 50.00 g
    * </pre>
    *
-   * @return A formatted string representation of the Recipe object.
+   * @return A formatted string representation of the Recipe object
    */
   @Override
   public String toString() {
@@ -161,12 +153,17 @@ public class Recipe {
     ingredientsTable.append(String.format("%-20s | %-10s%n", "Ingredient", "Amount"));
     ingredientsTable.append(String.format("%s%n", "-".repeat(33)));
 
-    // Legg til ingredienser i tabellformat
+    // Loop through the ingredients and format them correctly
     for (Map.Entry<String, IngredientDetail> entry : ingredients.entrySet()) {
-      ingredientsTable.append(String.format("%-20s | %-10.2f%n", entry.getKey(), entry.getValue()));
+      String ingredientName = entry.getKey();
+      IngredientDetail detail = entry.getValue();
+      ingredientsTable.append(String.format("%-20s | %-10.2f %s%n",
+          ingredientName,
+          detail.getAmount(),
+          detail.getUnit())); // Include both amount and unit
     }
 
-    // Kombiner oppskriftens detaljer med ingredienslisten
+    // Combine recipe details with the formatted ingredient list
     return String.format(
         "Recipe: %s%n" +
             "Description: %s%n" +
