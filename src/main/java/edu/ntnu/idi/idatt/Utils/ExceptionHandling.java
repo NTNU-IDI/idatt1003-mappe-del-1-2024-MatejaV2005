@@ -2,21 +2,21 @@ package edu.ntnu.idi.idatt.Utils;
 
 import edu.ntnu.idi.idatt.Model.FoodStorage;
 import edu.ntnu.idi.idatt.Model.Grocery;
+import edu.ntnu.idi.idatt.Model.Recipe;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 
 public class ExceptionHandling {
-  ////
+
   public static void validateName(String name) {
     if (name == null || name.trim().isEmpty()) {
-      throw new IllegalArgumentException("Name can NOT be a null or empty value");
+      throw new IllegalArgumentException("Name can not be a null or empty value");
     }
 
     if (name.trim().matches("-?\\d+(\\.\\d+)?")) {
       throw new IllegalArgumentException("name can not be a numerical value");
-
     }
   }
 
@@ -34,7 +34,7 @@ public class ExceptionHandling {
 
   public static void validateUnit(String unit) {
     if (unit == null || unit.trim().isEmpty()) {
-      throw new IllegalArgumentException("Unit cannot be null or empty.");
+      throw new IllegalArgumentException("Unit can not be null or empty.");
     }
   }
 
@@ -83,6 +83,16 @@ public class ExceptionHandling {
 
     if (amount >= totalAmount) {
       throw new IllegalArgumentException("Amount to be removed cannot be greater than the current total amount of the grocery.");
+    }
+  }
+
+  //FOR RECIPE CLASS---------------------------------------------------
+  public static void validateRecipe(Recipe recipe, List<Recipe> recipes) {
+    if (recipe == null) {
+      throw new IllegalArgumentException("Recipe cannot be null.");
+    }
+    if (recipes.stream().anyMatch(r -> r.getNameOfRecipe().equalsIgnoreCase(recipe.getNameOfRecipe()))) {
+      throw new IllegalArgumentException("Recipe with the same name already exists in the cookbook.");
     }
   }
 }
