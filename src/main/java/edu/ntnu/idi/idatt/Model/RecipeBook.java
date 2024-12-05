@@ -31,6 +31,7 @@ public class RecipeBook {
     if (recipes.stream().anyMatch(r -> r.getNameOfRecipe().equalsIgnoreCase(recipe.getNameOfRecipe()))) {
       throw new IllegalArgumentException("Recipe with the same name already exists in the cookbook.");
     }
+
     recipes.add(recipe);
     System.out.println("Recipe \"" + recipe.getNameOfRecipe() + "\" added to the cookbook.");
   }
@@ -47,5 +48,23 @@ public class RecipeBook {
         .findFirst()
         .orElse(null);
   }
-}
 
+  /**
+   * Returns a list of recipes that can be made with the current storage.
+   *
+   * @param storage the storage to check against
+   * @return a list of recipes that can be made
+   */
+  public List<Recipe> getAvailableRecipes(FoodStorage storage) {
+    List<Recipe> availableRecipes = new ArrayList<>();
+
+    for (Recipe recipe : recipes) {
+      recipe.setStorage(storage); // Attach the storage to the recipe
+      if (recipe.canMakeRecipe()) {
+        availableRecipes.add(recipe);
+      }
+    }
+
+    return availableRecipes;
+  }
+}
