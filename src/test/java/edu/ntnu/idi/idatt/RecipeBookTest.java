@@ -10,7 +10,6 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,5 +65,66 @@ class RecipeBookTest {
         recipeBook.addRecipe(null));
     assertEquals("Recipe cannot be null.", exception.getMessage());
   }
+
+  @Test
+  void testGetRecipeReturnsCorrectRecipe() {
+    Recipe recipe = new Recipe("Spaghetti Bolognese", "A classic Italian dish",
+        "Cook pasta, prepare sauce, mix and serve.",
+        Map.of(
+            "Spaghetti", new IngredientDetail(200.0, "g"),
+            "Ground Beef", new IngredientDetail(300.0, "g"),
+            "Tomato Sauce", new IngredientDetail(150.0, "ml")
+        ));
+
+    recipeBook.addRecipe(recipe);
+    Recipe retrievedRecipe = recipeBook.getRecipe("Spaghetti Bolognese");
+    assertNotNull(retrievedRecipe);
+    assertEquals("Spaghetti Bolognese", retrievedRecipe.getNameOfRecipe());
+  }
+
+  @Test
+  void testGetRecipeReturnsNullForNonexistentRecipe() {
+    Recipe recipe = recipeBook.getRecipe("Nonexistent Recipe");
+    assertNull(recipe);
+  }
+
+  @Test
+  void testGetAvailableRecipesWithAllIngredients() {
+    Recipe recipe = new Recipe("Spaghetti Bolognese", "A classic Italian dish",
+        "Cook pasta, prepare sauce, mix and serve.",
+        Map.of(
+            "Spaghetti", new IngredientDetail(200.0, "g"),
+            "Ground Beef", new IngredientDetail(300.0, "g"),
+            "Tomato Sauce", new IngredientDetail(150.0, "ml")
+        ));
+
+    recipeBook.addRecipe(recipe);
+    List<Recipe> availableRecipes = recipeBook.getAvailableRecipes(storage);
+    assertEquals(1, availableRecipes.size());
+    assertEquals("Spaghetti Bolognese", availableRecipes.get(0).getNameOfRecipe());
+  }
+
+  @Test
+  void testGetAvailableRecipesWithMissingIngredients() {
+    Recipe recipe = new Recipe("Spaghetti Bolognese", "A classic Italian dish",
+        "Cook pasta, prepare sauce, mix and serve.",
+        Map.of(
+            "Spaghetti", new IngredientDetail(200.0, "g"),
+            "Ground Beef", new IngredientDetail(300.0, "g"),
+            "Tomato Sauce", new IngredientDetail(150.0, "ml"),
+            "Parmesan Cheese", new IngredientDetail(50.0, "g")
+        ));
+
+    recipeBook.addRecipe(recipe);
+    List<Recipe> availableRecipes = recipeBook.getAvailableRecipes(storage);
+    assertTrue(availableRecipes.isEmpty());
+  }
+
+  @Test
+  void testGetAvailableRecipesWhenRecipeBookIsEmpty() {
+    List<Recipe> availableRecipes = recipeBook.getAvailableRecipes(storage);
+    assertTrue(availableRecipes.isEmpty());
+  }
 }
+
 
