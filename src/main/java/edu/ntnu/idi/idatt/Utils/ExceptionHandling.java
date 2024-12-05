@@ -1,6 +1,5 @@
 package edu.ntnu.idi.idatt.Utils;
 
-import edu.ntnu.idi.idatt.Model.FoodStorage;
 import edu.ntnu.idi.idatt.Model.Grocery;
 import edu.ntnu.idi.idatt.Model.Recipe;
 import java.time.LocalDate;
@@ -87,7 +86,14 @@ public class ExceptionHandling {
   }
 
   //FOR RECIPE CLASS---------------------------------------------------
-  public static void validateRecipe(Recipe recipe, List<Recipe> recipes) {
+  public static void validateRecipe(Recipe recipe) {
+    if (recipe == null) {
+      throw new IllegalArgumentException("Recipe cannot be null.");
+    }
+  }
+
+
+  public static void validateRecipeInRecipeBook(Recipe recipe, List<Recipe> recipes) {
     if (recipe == null) {
       throw new IllegalArgumentException("Recipe cannot be null.");
     }

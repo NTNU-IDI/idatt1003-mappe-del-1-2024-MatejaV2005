@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt.Utils;
 
+import edu.ntnu.idi.idatt.Model.Recipe;
+import edu.ntnu.idi.idatt.Model.RecipeBook;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -93,6 +95,20 @@ public class InputValidation {
     } catch (DateTimeParseException e) { //Throw exception if date format is incorrect
       System.out.println("Invalid date format.");
       return getValidDate(prompt);
+    }
+  }
+
+  public static Recipe getValidRecipe(String prompt, RecipeBook recipebook) {
+    System.out.println(prompt);
+    String recipeName = sc.nextLine();
+
+    try {
+      Recipe toCheck = recipebook.getRecipe(recipeName);
+      ExceptionHandling.validateRecipe(toCheck);
+      return toCheck;
+    } catch (IllegalArgumentException e) {
+      System.out.println("error: Recipe not found in recipe book");
+      return getValidRecipe(prompt, recipebook);
     }
   }
 }
