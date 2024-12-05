@@ -1,7 +1,6 @@
 package edu.ntnu.idi.idatt.Model;
 
 import edu.ntnu.idi.idatt.Utils.ExceptionHandling;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -88,8 +87,21 @@ public class Recipe {
   }
 
   /**
-   * Prints the missing ingredients required to make the recipe.
-   * If an ingredient is missing or insufficient, its name, missing amount, and unit are displayed.
+   * Prints ingredients that are missing or insufficient to make the recipe.
+   * <p>
+   * For each ingredient, the method:
+   * <ul>
+   *   <li>Calculates the total available amount in {@link FoodStorage}.</li>
+   *   <li>Determines the missing quantity if the available amount is insufficient.</li>
+   *   <li>Prints the ingredient's name, missing amount, and unit in the format:
+   *       {@code - IngredientName: Missing X.XX unit}.</li>
+   * </ul>
+   * <b>Example:</b>
+   * If 200g of Spaghetti and 150ml of Sauce are required, but storage has only 100g and 100ml:
+   * <pre>
+   * - Spaghetti: Missing 100.00 g
+   * - Tomato Sauce: Missing 50.00 ml
+   * </pre>
    */
   public void getMissingIngredients() {
     ingredients.forEach((ingredientName, requiredDetail) -> {
@@ -105,9 +117,15 @@ public class Recipe {
   }
 
   /**
-   * Checks if the recipe can be made with the available ingredients in storage.
-   *
-   * @return {@code true} if all required ingredients are available in sufficient quantities, {@code false} otherwise
+   * Determines if the recipe can be made with the available ingredients in {@link FoodStorage}.
+   * <p>
+   * For each ingredient in the recipe:
+   * <ul>
+   *   <li>Calculates the total available amount from storage.</li>
+   *   <li>Checks if the available amount is less than the required amount.</li>
+   *   <li>Returns {@code false} if any ingredient is insufficient.</li>
+   * </ul>
+   * <b>Returns:</b> {@code true} if all ingredients are sufficient; {@code false} otherwise.
    */
   public boolean canMakeRecipe() {
     for (Map.Entry<String, IngredientDetail> entry : ingredients.entrySet()) {
