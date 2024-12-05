@@ -52,7 +52,7 @@ public class FoodStorage {
 
     List<Grocery> groceries = storage.computeIfAbsent(groceryToAdd.getName().toLowerCase(), k -> new ArrayList<>());
 
-    // Use streams to check if there's an existing grocery item with the same expiry date.
+    // Use streams to check if there's an existing grocery item with the same expiry date and unit.
     groceries.stream()
         .filter(g -> g.getExpiryDate().equals(groceryToAdd.getExpiryDate()) && g.getUnit().equals(groceryToAdd.getUnit()))
         .findFirst()
@@ -170,18 +170,21 @@ public class FoodStorage {
    * @return a list of groceries expiring before the given date.
    *         if no groceries aer found before the best-before date, prints a message
    */
-  //REMEMBER TO ADD LOGIC FOR IF RETURNING AN EMPTY LIST
+
   public List<Grocery> bestBefore(LocalDate date) {
     ExceptionHandling.validateExpiryDate(date);
 
     List<Grocery> beforeDate =
         storage.values().stream()
-        .flatMap(List::stream)
-        .filter(bestBefore -> bestBefore.getExpiryDate().isBefore(date))
-        .toList();
+            .flatMap(List::stream)
+            .filter(bestBefore -> bestBefore.getExpiryDate().isBefore(date))
+            .toList();
 
     if (beforeDate.isEmpty()) {
-      System.out.println("No groceries found with a best-before date for following date: " +date);
+      System.out.println("No groceries found with a best-before date for the following date: " + date);
+    } else {
+      System.out.println("Groceries with a best-before date before " + date + ":");
+      beforeDate.forEach(grocery -> System.out.println(grocery.toString()));
     }
 
     return beforeDate;
@@ -283,39 +286,51 @@ public class FoodStorage {
 
 
   //DISPLAY-METHODS____________________________________________________________________________
-  //TODO: REWRITE JAVADOC
   /**
-   * Generates a string representation of the storage content.
-   * <p>
-   * The string will contain a list of all grocery names, their amounts, and expiry dates.
+   * Formats a map of groceries into a readable string representation with a table-like structure.
+   * Each grocery name is presented as a header, followed by its details (name, amount, unit, and expiry date)
+   * in a tabular format.
    *
-   * @param groceries decides which storage will be formatted
+   * <p><b>Example Output:</b>
+   * <pre>
+   * APPLE:
+   * Name                 Amount           Expiry Date
+   * ---------------------------------------------------
+   * Apple                1.00            stk         15-12-2024
+   * Apple                2.50            kg          10-11-2024
+   * ---------------------------------------------------
+   * </pre>
    *
-   * @return a formatted string displaying all stored groceries with details
+   * @param groceries a map where the key is the grocery name and the value is a list of {@link Grocery} objects.
+   *                  Each list contains all grocery items for that specific name.
+   * @return a formatted string representing the grocery information in a structured format.
    */
-
-
   public String formatGroceries(Map<String, List<Grocery>> groceries) {
     DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     StringBuilder sb = new StringBuilder();
 
+    // Iterate through each entry in the groceries map
     for (Map.Entry<String, List<Grocery>> entry : groceries.entrySet()) {
       String groceryName = entry.getKey();
       List<Grocery> groceryList = entry.getValue();
 
-      sb.append(groceryName.toUpperCase()).append(":\n");
-      sb.append(String.format("%-20s %-17s %-1s\n", "Name", "Amount", "Expiry Date"));
-      sb.append("---------------------------------------------------\n");
+      // Only print the table for groceries if there are items in the list
+      if (!groceryList.isEmpty()) {
+        sb.append(groceryName.toUpperCase()).append(":\n");
+        sb.append(String.format("%-20s %-17s %-1s\n", "Name", "Amount", "Expiry Date"));
+        sb.append("---------------------------------------------------\n");
 
-      for (Grocery grocery : groceryList) {
-        sb.append(String.format("%-20s %.2f %-12s %-1s\n",
-            grocery.getName(),
-            grocery.getAmount(),
-            UnitConverter.getStandardUnit(grocery.getUnit()), //Converts to standard unit for display
-            dateFormat.format(grocery.getExpiryDate())));
+        // Iterate through the list of groceries and print each one
+        for (Grocery grocery : groceryList) {
+          sb.append(String.format("%-20s %.2f %-12s %-1s\n",
+              grocery.getName(),
+              grocery.getAmount(),
+              grocery.getUnit(),
+              dateFormat.format(grocery.getExpiryDate())));
+        }
+        sb.append("---------------------------------------------------\n");
+        sb.append("\n");
       }
-      sb.append("---------------------------------------------------\n");
-      sb.append("\n");
     }
 
     return sb.toString();
@@ -348,7 +363,7 @@ public class FoodStorage {
     return formatGroceries(expiredGroceriesToDisplay);
   }
 
-
+  //HELPER METHOD--------------------------------------------------------------
   /**
    * Helper method for getting specific groceries as a list
    * Retrieves a list of groceries from storage based on the given name.
