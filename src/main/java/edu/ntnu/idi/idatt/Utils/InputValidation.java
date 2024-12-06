@@ -1,10 +1,14 @@
 package edu.ntnu.idi.idatt.Utils;
 
+import edu.ntnu.idi.idatt.Model.FoodStorage;
+import edu.ntnu.idi.idatt.Model.Grocery;
 import edu.ntnu.idi.idatt.Model.Recipe;
 import edu.ntnu.idi.idatt.Model.RecipeBook;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class InputValidation {
@@ -75,8 +79,7 @@ public class InputValidation {
       ExceptionHandling.validateUnit(output);
       UnitConverter.ConvertUnitAmount(1, output);
       return output;
-    }
-    catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException e) {
       System.out.println("error: " + e.getMessage());
       return getValidUnit(prompt);
     }
@@ -92,11 +95,27 @@ public class InputValidation {
       output = LocalDate.parse(dateString, dateFormat); // compares here if the user-input of the date (dateString) format equals the dateFormat we assigned by parsing through it. If valid, we assign it to expiryDate and the value is converted to a Date datatype
       ExceptionHandling.validateExpiryDate(output);
       return output;
-    } catch (DateTimeParseException e) { //Throw exception if date format is incorrect
+    } catch (DateTimeParseException e) { // Throw exception if date format is incorrect
       System.out.println("Invalid date format.");
       return getValidDate(prompt);
     }
   }
+
+  public static String getValidItemToRemove(String prompt, Map<String, List<Grocery>> storage) {
+    System.out.println(prompt);
+    String input = sc.nextLine().trim(); // Take user input
+
+    try {
+      // Validate the grocery name using the existing exception method
+      ExceptionHandling.validateStorageContainsItem(storage, input);
+      return input; // Return the valid input if validation passes
+    } catch (IllegalArgumentException e) {
+      System.out.println("Error: " + e.getMessage());
+      return getValidItemToRemove(prompt, storage); // Retry if validation fails
+    }
+  }
+
+
 
   public static Recipe getValidRecipe(String prompt, RecipeBook recipebook) {
     System.out.println(prompt);
