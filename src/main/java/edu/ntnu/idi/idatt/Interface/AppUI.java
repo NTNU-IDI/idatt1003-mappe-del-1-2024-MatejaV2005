@@ -165,7 +165,7 @@ public class AppUI {
   private void removeAmountOfGroceryFromStorage() {
     String groceryToRemove = InputValidation.getValidItemToRemove("\nPlease enter Grocery name: ", storage.sortGroceries()); // use sort groceries here to return a Map
     String desiredUnit = InputValidation.getValidUnit("\nPlease enter the desired unit for removal: ");
-    double amountToRemove = InputValidation.getValidDouble("\nPlease enter amount to remove: ", false);
+    double amountToRemove = InputValidation.getValidAmountToRemove("\nPlease enter amount to remove: ", storage.sortGroceries(), groceryToRemove);
     storage.removeAmountFromStorage(groceryToRemove, amountToRemove, desiredUnit);
   }
 
@@ -218,10 +218,17 @@ public class AppUI {
 
       recipeIngredients.put(ingredientName, new IngredientDetail(ingredientAmount, ingredientUnit));
 
-      // Ask the user if they want to add more ingredients
-      System.out.println("Do you want to add more ingredients? (Y/N)");
-      String response = scanner.nextLine().trim().toLowerCase();
-      finishedAdding = response.equals("n");
+      System.out.println("do you want to add more inrgedients? (Y/N)");
+
+      while (true) { // Loop until a valid response is provided
+        try {
+          String response = InputValidation.getValidAnswer(scanner.nextLine().trim().toLowerCase());
+          finishedAdding = response.equals("n");
+          break;
+        } catch (IllegalArgumentException e) {
+          System.out.println(e.getMessage());
+        }
+      }
     }
 
     Recipe newRecipe = new Recipe(recipeName, recipeDescription, recipeProcess, recipeIngredients);
