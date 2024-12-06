@@ -121,9 +121,8 @@ public class FoodStorage {
    * @return a `TreeMap` containing the groceries sorted alphabetically by their keys
    */
   public Map<String, List<Grocery>> sortGroceries() {
-    Map<String, List<Grocery>> sortedGroceries = new TreeMap<>();
-    sortedGroceries.putAll(storage);
-    return sortedGroceries;
+    Map<String, List<Grocery>> sortedStorage = new TreeMap<>(storage);
+    return sortedStorage;
   }
 
   /**
@@ -140,21 +139,18 @@ public class FoodStorage {
   public List<Grocery> findInStorage(String groceryName, boolean searchExpired) {
     ExceptionHandling.validateName(groceryName);
 
-    String key = groceryName.toLowerCase(); // Case-insensitive comparison
-    Map<String, List<Grocery>> targetStorage = searchExpired ? expiredStorage : storage;
+    String key = groceryName.toLowerCase();
+    Map<String, List<Grocery>> targetStorage = searchExpired ? expiredStorage : storage; // searches the corresponding storage based on boolean value
 
-    List<Grocery> foundGroceries = targetStorage.getOrDefault(key, new ArrayList<>());
+    List<Grocery> foundGroceries = targetStorage.getOrDefault(key, new ArrayList<>()).stream()
+        .filter(grocery -> searchExpired || !grocery.getExpiryDate().isBefore(LocalDate.now()))
+        .toList();
 
-    // Check which storage was used and print appropriate message
+    String storageType = searchExpired ? "expired storage" : "storage";
     if (foundGroceries.isEmpty()) {
-      System.out.println("Grocery not found: " + groceryName);
+      System.out.printf("No groceries found in %s: %s%n \n", storageType, groceryName);
     } else {
-      if (targetStorage == expiredStorage) {
-        System.out.println("Found expired groceries for |" + groceryName + "|:");
-      } else {
-        System.out.println("Found groceries in storage for |" + groceryName + "|:");
-      }
-
+      System.out.printf("Found %s for |%s|:%n", searchExpired ? "expired groceries" : "groceries in storage", groceryName);
       System.out.println("--------------------------------------------");
       foundGroceries.forEach(System.out::println);
       System.out.println();
@@ -162,6 +158,7 @@ public class FoodStorage {
 
     return foundGroceries;
   }
+
 
   /**
    * Returns a list of groceries that expire before the specified date.
@@ -221,15 +218,7 @@ public class FoodStorage {
   public void removeExpiredGroceries() {
     //Loop variable groceryList for each list in storage.
     for (List<Grocery> groceryList : storage.values()) {
-      Iterator<Grocery> it = groceryList.iterator();
-
-      while (it.hasNext()) {
-        Grocery grocery = it.next();
-
-        if (grocery.isExpired()) {
-          it.remove();
-        }
-      }
+      groceryList.removeIf(Grocery::isExpired); //TODO: REMEMBER TO CHECK THIS OUT
     }
   }
 
@@ -260,10 +249,6 @@ public class FoodStorage {
       expiredStorage.computeIfAbsent(grocery.getName().toLowerCase(), k -> new ArrayList<>()).add(grocery); // Convert name to lowercase
     });
 
-    if (listOfExpiredGroceries.isEmpty()) {
-      System.out.println("No expired groceries in this storage");
-    }
-
     return expiredStorage;
   }
 
@@ -276,10 +261,10 @@ public class FoodStorage {
    *
    * @return the total sum of prices of all expired groceries as a {@code double}.
    */
-  public double TotalValueOfExpiredGroceries() {
-    return storage.values().stream()
+  public double totalValueOfExpiredGroceries() {
+    return expiredStorage.values().stream()
         .flatMap(List::stream)
-        .filter(exp_g -> exp_g.isExpired())
+        .filter(Grocery::isExpired)
         .mapToDouble(Grocery::getPrice)
         .sum();
   }
@@ -345,7 +330,7 @@ public class FoodStorage {
    * @param sorted whether to sort the groceries by name
    * @return a formatted string of all groceries with their details
    */
-  public String toString (boolean sorted) {
+  public String toString(boolean sorted) {
     Map<String, List<Grocery>> groceriesToDisplay = sorted ? sortGroceries() : storage;
     return formatGroceries(groceriesToDisplay);
   }
