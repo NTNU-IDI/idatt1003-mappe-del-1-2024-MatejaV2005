@@ -115,6 +115,21 @@ public class InputValidation {
     }
   }
 
+  public static double getValidAmountToRemove(String prompt, Map<String, List<Grocery>> storage, String itemName) {
+    System.out.println(prompt);
+    String input = sc.nextLine().trim();
+
+
+    try {
+      double amount = Double.parseDouble(input);
+      ExceptionHandling.validateAmountToRemove(storage, amount, itemName);
+      return amount;
+    } catch (IllegalArgumentException e) {
+      System.out.println("Error: " + e.getMessage());
+      return getValidAmountToRemove(prompt, storage, itemName);
+    }
+  }
+
 
 
   public static Recipe getValidRecipe(String prompt, RecipeBook recipebook) {
@@ -128,6 +143,14 @@ public class InputValidation {
     } catch (IllegalArgumentException e) {
       System.out.println("error: Recipe not found in recipe book");
       return getValidRecipe(prompt, recipebook);
+    }
+  }
+
+  public static String getValidAnswer(String input) {
+    if (input.equals("y") || input.equals("n")) {
+      return input;
+    } else {
+      throw new IllegalArgumentException("Please type Y or N.");
     }
   }
 }
