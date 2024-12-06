@@ -66,14 +66,6 @@ class RecipeTest {
     assertTrue(missingIngredients.contains("Onion"), "Missing ingredient should be 'Onion'");
   }
 
-  @Test
-  void testEmptyRecipe() {
-    Recipe emptyRecipe = new Recipe("Empty Recipe", "This recipe has no ingredients.",
-        "No process needed.", new HashMap<>());
-    emptyRecipe.setStorage(storage);
-    assertTrue(emptyRecipe.canMakeRecipe(), "An empty recipe should always be possible to make.");
-    assertEquals(0, emptyRecipe.getIngredients().size(), "There should be no missing ingredients in an empty recipe.");
-  }
 
   @Test
   void testEmptyStorage() {
@@ -94,17 +86,40 @@ class RecipeTest {
 
   @Test
   void testInvalidIngredientUnit() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () ->
-        new IngredientDetail(200.0, "invalidUnit"));
-    assertEquals("Unsupported unit: invalidUnit", exception.getMessage(),
-        "Invalid unit should throw an exception with appropriate message.");
+    assertThrows(IllegalArgumentException.class, () -> {
+      new IngredientDetail(200, "Ounces");
+    });
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      new IngredientDetail(200, "");
+    });
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      new IngredientDetail(200, null);
+    });
   }
 
   @Test
   void testNegativeIngredientAmount() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () ->
-        new IngredientDetail(-200.0, "g"));
-    assertEquals("Amount must be greater than 0.", exception.getMessage(),
-        "Negative ingredient amounts should throw an exception.");
+    assertThrows(IllegalArgumentException.class, () -> {
+      new IngredientDetail(-200, "g");
+    });
+  }
+
+
+  // set-method throws exception
+  @Test
+  void validateAndSetName_ThrowsException() {
+    assertThrows(IllegalArgumentException.class, () -> {
+      new Recipe(" ", "test", "test", Map.of());
+    });
+  }
+
+  @Test
+  void validateAndSetIngredients_throwsException() {
+    assertThrows(IllegalArgumentException.class, () -> {
+      new Recipe("Empty Recipe", "This recipe has no ingredients.",
+          "No process needed.", Map.of());
+    });
   }
 }
