@@ -13,7 +13,7 @@ public class Recipe {
   private final String nameOfRecipe; // The name of the recipe
   private final String description; // A brief description of the recipe
   private final String process; // Step-by-step instructions for the recipe
-  private Map<String, IngredientDetail> ingredients; // Map of ingredient names to their details
+  private final Map<String, IngredientDetail> ingredients; // Map of ingredient names to their details
   public FoodStorage storage; // Storage instance for checking available groceries
 
   /**
@@ -27,69 +27,64 @@ public class Recipe {
    * @throws IllegalArgumentException if the name, description, or process are invalid
    */
   public Recipe(String nameOfRecipe, String description, String process, Map<String, IngredientDetail> ingredients) {
-    ExceptionHandling.validateName(nameOfRecipe);
-    ExceptionHandling.validateName(description);
-    ExceptionHandling.validateName(process);
-
-    this.nameOfRecipe = nameOfRecipe;
-    this.description = description;
-    this.process = process;
-    this.ingredients = ingredients;
+    this.nameOfRecipe = validateAndSetName(nameOfRecipe);
+    this.description = validateAndSetDescription(description);
+    this.process = validateAndSetProcess(process);
+    this.ingredients = validateAndSetIngredients(ingredients);
     this.storage = new FoodStorage();
   }
 
-  /**
-   * Retrieves the name of the recipe.
-   *
-   * @return the name of the recipe
-   */
   public String getNameOfRecipe() {
     return nameOfRecipe;
   }
 
-  /**
-   * Retrieves the description of the recipe.
-   *
-   * @return a brief description of the recipe
-   */
   public String getDescription() {
     return description;
   }
 
-  /**
-   * Retrieves the cooking process or instructions for the recipe.
-   *
-   * @return the step-by-step cooking process
-   */
   public String getProcess() {
     return process;
   }
 
-  /**
-   * Retrieves the list of ingredients for the recipe.
-   *
-   * @return a map of ingredients, where the key is the ingredient name, and the value is the required amount
-   */
   public Map<String, IngredientDetail> getIngredients() {
     return ingredients;
   }
 
-  /**
-   * Sets the storage instance for the recipe.
-   * This allows the recipe to check available ingredients against the storage.
-   *
-   * @param storage the {@link FoodStorage} instance to set
-   * @return the set storage instance
-   */
-  public FoodStorage setStorage(FoodStorage storage) {
-    this.storage = storage;
+  public FoodStorage getStorage() {
     return storage;
   }
 
+  public void setStorage(FoodStorage storage) {
+    ExceptionHandling.nullStorage(storage);
+    this.storage = storage;
+  }
+
+  // Private validation and setting methods
+  private String validateAndSetName(String name) {
+    ExceptionHandling.validateName(name);
+    return name;
+  }
+
+  private String validateAndSetDescription(String description) {
+    ExceptionHandling.validateName(description);
+    return description;
+  }
+
+  private String validateAndSetProcess(String process) {
+    ExceptionHandling.validateName(process);
+    return process;
+  }
+
+  private Map<String, IngredientDetail> validateAndSetIngredients(Map<String, IngredientDetail> ingredients) {
+    ExceptionHandling.validateIngredients(ingredients);
+    return ingredients;
+  }
+
+
   /**
    * Prints ingredients that are missing or insufficient to make the recipe.
-   * <p>
-   * For each ingredient, the method:
+   *
+   * <p>For each ingredient, the method:
    * <ul>
    *   <li>Calculates the total available amount in {@link FoodStorage}.</li>
    *   <li>Determines the missing quantity if the available amount is insufficient.</li>
@@ -118,8 +113,8 @@ public class Recipe {
 
   /**
    * Determines if the recipe can be made with the available ingredients in {@link FoodStorage}.
-   * <p>
-   * For each ingredient in the recipe:
+   *
+   * <p>For each ingredient in the recipe:
    * <ul>
    *   <li>Calculates the total available amount from storage.</li>
    *   <li>Checks if the available amount is less than the required amount.</li>
@@ -128,6 +123,7 @@ public class Recipe {
    * <b>Returns:</b> {@code true} if all ingredients are sufficient; {@code false} otherwise.
    */
   public boolean canMakeRecipe() {
+    // Use Map.entry for control flow mechanisms (e.g. return true/false)
     for (Map.Entry<String, IngredientDetail> entry : ingredients.entrySet()) {
       String ingredientName = entry.getKey();
       IngredientDetail requiredDetail = entry.getValue();
@@ -183,10 +179,7 @@ public class Recipe {
 
     // Combine recipe details with the formatted ingredient list
     return String.format(
-        "Recipe: %s%n" +
-            "Description: %s%n" +
-            "Process: %s%n" +
-            "Ingredients:%n%s",
+        "Recipe: %s%n" + "Description: %s%n" + "Process: %s%n" + "Ingredients:%n%s",
         nameOfRecipe,
         description,
         process,
