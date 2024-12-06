@@ -23,9 +23,6 @@ public class IngredientDetail {
     this.setAmountAndUnit(amount, unit); // Automatically validate and convert
   }
 
-  // -------------------------------------------------------------------
-  // Getters
-  // -------------------------------------------------------------------
 
   public double getAmount() {
     return amount;
@@ -35,9 +32,6 @@ public class IngredientDetail {
     return unit;
   }
 
-  // -------------------------------------------------------------------
-  // Combined Setter for Amount and Unit
-  // -------------------------------------------------------------------
 
   /**
    * Sets the amount and unit, converting both to the standard format.
@@ -53,33 +47,6 @@ public class IngredientDetail {
     this.unit = UnitConverter.getStandardUnit(unit);
     this.amount = UnitConverter.convertToStandardUnit(amount, unit);
   }
-
-  // -------------------------------------------------------------------
-  // Amount Manipulation
-  // -------------------------------------------------------------------
-
-  /**
-   * Increases the amount of the ingredient.
-   *
-   * @param amountToAdd the amount to add
-   */
-  public void increaseAmount(double amountToAdd) {
-    ExceptionHandling.validateAmount(amountToAdd);
-    this.amount += amountToAdd; // Add directly in the standardized unit
-  }
-
-  /**
-   * Decreases the amount of the ingredient.
-   *
-   * @param amountToSubtract the amount to subtract
-   */
-  public void decreaseAmount(double amountToSubtract) {
-    this.amount -= amountToSubtract; // Subtract directly in the standardized unit
-  }
-
-  // -------------------------------------------------------------------
-  // Override Methods
-  // -------------------------------------------------------------------
 
   @Override
   public String toString() {
