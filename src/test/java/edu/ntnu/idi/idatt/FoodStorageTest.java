@@ -45,7 +45,7 @@ public class FoodStorageTest {
 
     List<Grocery> milkGroceries = foodStorage.getGroceriesByName("milk");  // Use lowercase here
     assertEquals(2, milkGroceries.size());
-    assertEquals(3.0, milkGroceries.get(0).getAmount());
+    assertEquals(3.0, milkGroceries.getFirst().getAmount());
   }
 
   @Test
@@ -73,7 +73,7 @@ public class FoodStorageTest {
     foodStorage.removeAmountFromStorage("milk", 4.0, "l");
 
     List<Grocery> groceries = foodStorage.getGroceriesByName("milk");
-    assertEquals(1, groceries.get(0).getAmount());
+    assertEquals(1, groceries.getFirst().getAmount());
   }
 
   @Test
@@ -87,7 +87,7 @@ public class FoodStorageTest {
 
     List<Grocery> groceries = foodStorage.getGroceriesByName("milk");  // Use lowercase here
 
-    assertEquals(grocery2, groceries.get(0));
+    assertEquals(grocery2, groceries.getFirst());
     assertEquals(1, groceries.size());
   }
 
@@ -102,7 +102,7 @@ public class FoodStorageTest {
 
     List<Grocery> groceries = foodStorage.getGroceriesByName("milk");  // Use lowercase here
 
-    assertEquals(1, groceries.get(0).getAmount());
+    assertEquals(1, groceries.getFirst().getAmount());
   }
 
   @Test
@@ -141,11 +141,11 @@ public class FoodStorageTest {
     // Test normal storage lookup
     List<Grocery> normalMilk = foodStorage.findInStorage("milk", false);
     assertEquals(1, normalMilk.size(), "Milk should have 1 non-expired entry.");
-    assertEquals("milk", normalMilk.get(0).getName(), "Name should match.");
+    assertEquals("milk", normalMilk.getFirst().getName(), "Name should match.");
 
     List<Grocery> normalCheese = foodStorage.findInStorage("cheese", false);
     assertEquals(1, normalCheese.size(), "Cheese should have 1 non-expired entry.");
-    assertEquals("cheese", normalCheese.get(0).getName(), "Name should match.");
+    assertEquals("cheese", normalCheese.getFirst().getName(), "Name should match.");
 
     // Test for groceries not in storage
     List<Grocery> notFound = foodStorage.findInStorage("apple", false);
@@ -161,7 +161,7 @@ public class FoodStorageTest {
     // Test expired storage lookup
     List<Grocery> expiredMilk = foodStorage.findInStorage("milk", true);
     assertEquals(1, expiredMilk.size(), "Milk should have 1 expired entry.");
-    assertEquals("milk", expiredMilk.get(0).getName(), "Name should match.");
+    assertEquals("milk", expiredMilk.getFirst().getName(), "Name should match.");
 
     List<Grocery> expiredCheese = foodStorage.findInStorage("cheese", true);
     assertTrue(expiredCheese.isEmpty(), "Cheese should not have any expired entries.");
@@ -257,7 +257,7 @@ public class FoodStorageTest {
 
     List<Grocery> remainingBread = foodStorage.getGroceriesByName("Bread");
     assertEquals(1, remainingBread.size(), "Only Bread should remain in storage");
-    assertEquals("bread", remainingBread.get(0).getName(), "Remaining grocery should be Bread");
+    assertEquals("bread", remainingBread.getFirst().getName(), "Remaining grocery should be Bread");
   }
 
 
@@ -288,9 +288,7 @@ public class FoodStorageTest {
   public void testRegisterToStorageNullGrocery() {
     FoodStorage foodStorage = new FoodStorage();
 
-    assertThrows(IllegalArgumentException.class, () -> {
-      foodStorage.registerToStorage(null);
-    }, "Should throw IllegalArgumentException when adding null grocery");
+    assertThrows(IllegalArgumentException.class, () -> foodStorage.registerToStorage(null), "Should throw IllegalArgumentException when adding null grocery");
   }
 
   @Test
@@ -299,17 +297,11 @@ public class FoodStorageTest {
 
     foodStorage.registerToStorage(new Grocery("Apple", 2.0, 1.0, "kg", LocalDate.of(2024, 12, 31)));
 
-    assertThrows(IllegalArgumentException.class, () -> {
-      foodStorage.removeAmountFromStorage("Banana", 1.0, "kg");
-    }, "Should throw IllegalArgumentException when removing non-existent grocery");
+    assertThrows(IllegalArgumentException.class, () -> foodStorage.removeAmountFromStorage("Banana", 1.0, "kg"), "Should throw IllegalArgumentException when removing non-existent grocery");
 
-    assertThrows(IllegalArgumentException.class, () -> {
-      foodStorage.removeAmountFromStorage("", 1.0, "kg");
-    }, "Should throw IllegalArgumentException when removing grocery of empty String");
+    assertThrows(IllegalArgumentException.class, () -> foodStorage.removeAmountFromStorage("", 1.0, "kg"), "Should throw IllegalArgumentException when removing grocery of empty String");
 
-    assertThrows(IllegalArgumentException.class, () -> {
-      foodStorage.removeAmountFromStorage(null, 1.0, "kg");
-    }, "Should throw IllegalArgumentException when removing null grocery");
+    assertThrows(IllegalArgumentException.class, () -> foodStorage.removeAmountFromStorage(null, 1.0, "kg"), "Should throw IllegalArgumentException when removing null grocery");
   }
 
   @Test
@@ -318,9 +310,7 @@ public class FoodStorageTest {
 
     foodStorage.registerToStorage(new Grocery("Apple", 2.0, 1.0, "kg", LocalDate.of(2024, 12, 31)));
 
-    assertThrows(IllegalArgumentException.class, () -> {
-      foodStorage.removeAmountFromStorage("Apple", -1.0, "kg");
-    }, "Should throw IllegalArgumentException when removing a negative amount");
+    assertThrows(IllegalArgumentException.class, () -> foodStorage.removeAmountFromStorage("Apple", -1.0, "kg"), "Should throw IllegalArgumentException when removing a negative amount");
   }
 
   @Test
