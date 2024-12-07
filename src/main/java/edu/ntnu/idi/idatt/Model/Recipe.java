@@ -54,27 +54,63 @@ public class Recipe {
     return storage;
   }
 
+  // Set-methods ---------------------------------------------------------
+
+  /**
+   * validates and sets the instance for recipe
+   * This allows the recipe to check available ingredients against the specified {@link FoodStorage}.
+   *
+   * @param storage the {@link FoodStorage} instance to associate with the recipe.
+   * @throws IllegalArgumentException if the provided storage is null
+   */
   public void setStorage(FoodStorage storage) {
     ExceptionHandling.nullStorage(storage);
     this.storage = storage;
   }
 
-  // Private validation and setting methods
+  /**
+   * Validates and sets the name of the recipe.
+   *
+   * @param name the name of the recipe to validate
+   * @return the validated name
+   * @throws IllegalArgumentException if the name is null, empty, or invalid
+   */
   private String validateAndSetName(String name) {
     ExceptionHandling.validateName(name);
     return name;
   }
 
+  /**
+   * Validates and sets the description of the recipe.
+   *
+   * @param description the description of the recipe to validate
+   * @return the validated description
+   * @throws IllegalArgumentException if the description is null, empty, or invalid
+   */
   private String validateAndSetDescription(String description) {
     ExceptionHandling.validateName(description);
     return description;
   }
 
+  /**
+   * Validates and sets the process (cooking instructions) of the recipe.
+   *
+   * @param process the cooking process to validate
+   * @return the validated process
+   * @throws IllegalArgumentException if the process is null, empty, or invalid
+   */
   private String validateAndSetProcess(String process) {
     ExceptionHandling.validateName(process);
     return process;
   }
 
+  /**
+   * Validates and sets the ingredients of the recipe.
+   *
+   * @param ingredients a map of ingredient names to their respective details
+   * @return the validated map of ingredients
+   * @throws IllegalArgumentException if the ingredients map is null, empty, or contains invalid data
+   */
   private Map<String, IngredientDetail> validateAndSetIngredients(Map<String, IngredientDetail> ingredients) {
     ExceptionHandling.validateIngredients(ingredients);
     return ingredients;
@@ -100,7 +136,7 @@ public class Recipe {
    */
   public void getMissingIngredients() {
     ingredients.forEach((ingredientName, requiredDetail) -> {
-      double availableAmount = storage.getGroceriesByName(ingredientName).stream()
+      double availableAmount = storage.findGroceriesByName(ingredientName).stream()
           .mapToDouble(Grocery::getAmount)
           .sum();
 
@@ -128,7 +164,7 @@ public class Recipe {
       String ingredientName = entry.getKey();
       IngredientDetail requiredDetail = entry.getValue();
 
-      double availableAmount = storage.getGroceriesByName(ingredientName).stream()
+      double availableAmount = storage.findGroceriesByName(ingredientName).stream()
           .mapToDouble(Grocery::getAmount)
           .sum();
 

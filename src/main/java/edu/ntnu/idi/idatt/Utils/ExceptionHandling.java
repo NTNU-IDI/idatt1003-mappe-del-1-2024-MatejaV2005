@@ -94,6 +94,17 @@ public class ExceptionHandling {
     }
   }
 
+  public static void validateUnitCompatibility(String unit, String groceryName, Map<String, List<Grocery>> storage) {
+    String standardUnit = UnitConverter.getStandardUnit(unit);
+    List<Grocery> groceries = storage.get(groceryName.toLowerCase());
+
+    String groceryStandardUnit = UnitConverter.getStandardUnit(groceries.get(0).getUnit());
+
+    if (!standardUnit.equals(groceryStandardUnit)) {
+      throw new IllegalArgumentException("Unit mismatch: Cannot use '" + unit + "' with groceries measured in '" + groceryStandardUnit + "'.");
+    }
+  }
+
   //FOR RECIPE CLASS---------------------------------------------------
   public static void validateRecipe(Recipe recipe) {
     if (recipe == null) {

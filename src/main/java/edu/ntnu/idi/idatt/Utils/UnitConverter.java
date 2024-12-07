@@ -23,14 +23,13 @@ public class UnitConverter {
       case "kg": return "g";
       case "g": return "g";  // Standardize weight to grams
       case "l": return "l";  // Standardize volume to liters
-      case "stk": return "stk";  // Stock items stay as they are
+      case "stk": return "stk";  // Stykk Items stay as they are
       default: throw new IllegalArgumentException("Unsupported unit: " + unit);
     }
   }
 
   // Converts the amount to its standard unit (g for weight, l for volume)
   public static double convertToStandardUnit(double amount, String unit) {
-    String standardUnit = getStandardUnit(unit);
-    return ConvertUnitAmount(amount, unit);  // Convert to the standardized unit
+    return ConvertUnitAmount(amount, unit);
   }
 }

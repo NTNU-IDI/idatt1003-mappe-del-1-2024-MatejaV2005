@@ -33,7 +33,7 @@ public class AppUI {
   private static final int EXIT = 0;
 
   private final Scanner scanner = new Scanner(System.in);
-  private FoodStorage storage = null; // Initialize FoodStorage instance globally
+  private FoodStorage mainStorage = null; // Initialize FoodStorage instance globally
   private RecipeBook recipeBook = null; // Initialize FoodStorage instance globally
 
   /**
@@ -143,11 +143,11 @@ public class AppUI {
 
       // Create and register the grocery
       Grocery registeredGrocery = new Grocery(groceryName, groceryPrice, groceryAmount, groceryUnit, groceryExpiryDate);
-      storage.registerToStorage(registeredGrocery);
+      mainStorage.registerToStorage(registeredGrocery);
 
       // Filter and remove expired groceries from storage
-      storage.filterAndGroupExpiredGroceries();
-      storage.removeExpiredGroceries();
+      mainStorage.filterAndGroupExpiredGroceries();
+      mainStorage.removeExpiredGroceries();
 
       if (groceryExpiryDate.isBefore(LocalDate.now())) {
         System.out.println("WARNING: Added expired Grocery, moved to expired storage!");
@@ -163,41 +163,43 @@ public class AppUI {
   }
 
   private void removeAmountOfGroceryFromStorage() {
-    String groceryToRemove = InputValidation.getValidItemToRemove("\nPlease enter Grocery name: ", storage.sortGroceries()); // use sort groceries here to return a Map
-    String desiredUnit = InputValidation.getValidUnit("\nPlease enter the desired unit for removal: ");
-    double amountToRemove = InputValidation.getValidAmountToRemove("\nPlease enter amount to remove: ", storage.sortGroceries(), groceryToRemove);
-    storage.removeAmountFromStorage(groceryToRemove, amountToRemove, desiredUnit);
+    String groceryToRemove = InputValidation.getValidItemToRemove("\nPlease enter Grocery name: ", mainStorage.sortGroceries()); // use sort groceries here to return a Map<String, List<Grocery>>
+    String desiredUnit = InputValidation.getValidCompatibleUnit("\nPlease enter the desired unit for removal: ", groceryToRemove, mainStorage.sortGroceries());
+    double amountToRemove = InputValidation.getValidAmountToRemove("\nPlease enter amount to remove: ", mainStorage.sortGroceries(), groceryToRemove, desiredUnit);
+
+
+    mainStorage.removeAmountFromStorage(groceryToRemove, amountToRemove, desiredUnit);
   }
 
   private void sortedStorage() {
-    System.out.println(storage.toString(true));
+    System.out.println(mainStorage.toString(true));
   }
 
   private void findGroceryInStorage() {
     String groceryToFind = InputValidation.getValidString("Please enter the name of the grocery:\n");
-    storage.findInStorage(groceryToFind, false);
-    storage.findInStorage(groceryToFind, true);
+    mainStorage.findInStorage(groceryToFind, false);
+    mainStorage.findInStorage(groceryToFind, true);
   }
 
   private void bestBeforeExpiryDate() {
     LocalDate bestBeforeDate = InputValidation.getValidDate("Please enter a date you want to check for (dd-mm-yyyy)");
-    System.out.println(storage.bestBefore(bestBeforeDate));
+    System.out.println(mainStorage.bestBefore(bestBeforeDate));
   }
 
   private void totalValueOfGroceries() {
-    System.out.println("The total monetary value of all groceries: \n" + storage.totalValueOfGroceries() + "kr");
+    System.out.println("The total monetary value of all groceries: \n" + mainStorage.totalValueOfGroceries() + "kr");
   }
 
   private void viewExpiredGroceries() {
-    System.out.println(storage.displayExpiredGroceries());
+    System.out.println(mainStorage.displayExpiredGroceries());
   }
 
   private void totalValueOfExpiredGroceries() {
-    System.out.println("Total monetary value of expired groceries in storage: \n" + storage.totalValueOfExpiredGroceries() + "kr");
+    System.out.println("Total monetary value of expired groceries in storage: \n" + mainStorage.totalValueOfExpiredGroceries() + "kr");
   }
 
   private void showStorage() {
-    System.out.println(storage.toString(false));
+    System.out.println(mainStorage.toString(false));
   }
 
   private void createRecipe() {
@@ -245,7 +247,7 @@ public class AppUI {
     Recipe recipe = InputValidation.getValidRecipe("Enter the name of the recipe you want to check:", recipeBook);
 
     // Link the FoodStorage to the recipe
-    recipe.setStorage(storage);
+    recipe.setStorage(mainStorage);
 
     if (recipe.canMakeRecipe()) {
       System.out.println("Here is the recipe you requested:");
@@ -258,12 +260,12 @@ public class AppUI {
   }
 
   private void checkForAllAvailableRecipes() {
-    if (recipeBook.getAvailableRecipes(storage).isEmpty()) {
+    if (recipeBook.getAvailableRecipes(mainStorage).isEmpty()) {
       System.out.println("You do not have enough ingredients to make any recipes in the cookbook.");
     }
 
     // Fetch all recipes that can be made
-    List<Recipe> availableRecipes = recipeBook.getAvailableRecipes(storage);
+    List<Recipe> availableRecipes = recipeBook.getAvailableRecipes(mainStorage);
 
     if (availableRecipes.isEmpty()) {
       System.out.println("You do not have enough ingredients to make any recipes in the cookbook.");
@@ -278,7 +280,7 @@ public class AppUI {
 
 
   private void init() {
-    storage = new FoodStorage();
+    mainStorage = new FoodStorage();
     recipeBook = new RecipeBook();
 
     // DUMMY VALUES----------------
@@ -341,12 +343,12 @@ public class AppUI {
     );
 
     for (Grocery g : groceryList) {
-      storage.registerToStorage(g);
+      mainStorage.registerToStorage(g);
     }
 
     // automatically filters and removes expired groceries when initiated
-    storage.filterAndGroupExpiredGroceries();
-    storage.removeExpiredGroceries();
+    mainStorage.filterAndGroupExpiredGroceries();
+    mainStorage.removeExpiredGroceries();
 
     // Recipes
     Map<String, IngredientDetail> spaghettiIngredients = new HashMap<>();

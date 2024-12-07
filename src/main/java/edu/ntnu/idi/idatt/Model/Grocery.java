@@ -14,7 +14,7 @@ public class Grocery {
 
   private final String name;
   private double amount;
-  private double price;
+  private final double price;
   private final String unit;
   private final LocalDate expiryDate; // Immutable field to ensure safety
 
@@ -32,7 +32,7 @@ public class Grocery {
     this.name = validateAndSetName(name);
     this.price = validateAndSetPrice(price);
     this.unit = validateAndSetUnit(unit);
-    this.amount = validateAndSetAmount(amount, unit);
+    validateAndSetAmount(amount, unit);
     this.expiryDate = validateAndSetExpiryDate(expiryDate);
   }
 
@@ -69,7 +69,7 @@ public class Grocery {
    */
   private String validateAndSetName(String name) {
     ExceptionHandling.validateName(name); // Validates name
-    return name; // Returns validated name
+    return name.toLowerCase(); // Returns validated name
   }
 
   /**
@@ -91,7 +91,7 @@ public class Grocery {
    * @return the standardized unit after validation
    * @throws IllegalArgumentException if the unit is invalid
    */
-  public String validateAndSetUnit(String unit) {
+  private String validateAndSetUnit(String unit) {
     ExceptionHandling.validateUnit(unit); // Validates unit
     return UnitConverter.getStandardUnit(unit); // Converts to a standard unit
   }
@@ -105,9 +105,9 @@ public class Grocery {
    * @return the standardized amount after validation
    * @throws IllegalArgumentException if the amount is invalid
    */
-  public double validateAndSetAmount(double amount, String unit) {
+  public void validateAndSetAmount(double amount, String unit) {
     ExceptionHandling.validateAmount(amount); // Validates amount
-    return UnitConverter.convertToStandardUnit(amount, unit); // Converts to a standardized amount
+    this.amount = UnitConverter.convertToStandardUnit(amount, unit); // Converts to a standardized amount
   }
 
   /**

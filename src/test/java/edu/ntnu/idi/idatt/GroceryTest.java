@@ -18,7 +18,6 @@ class GroceryTest {
   void setUp() {
     expiryDate = LocalDate.of(2024, 12, 31);
 
-    // Initialize Grocery objects
     milk = new Grocery("Melk", 35.0, 3.0, "l", expiryDate);
     cheese = new Grocery("Ost", 40.0, 10.0, "g", expiryDate);
     meat = new Grocery("Kjøtt", 125.0, 10.0, "l", expiryDate);
@@ -28,7 +27,7 @@ class GroceryTest {
 
   @Test
   void testingTheToStringFunction() {
-    assertEquals("Kjøtt, 125.0kr, 10.0 l, 31-12-2024", meat.toString());
+    assertEquals("kjøtt, 125.0kr, 10.0 l, 31-12-2024", meat.toString());
   }
 
   @Test
@@ -39,13 +38,13 @@ class GroceryTest {
   @Test
   void testingIncreaseAmount() {
     cheese.increaseAmount(2.0);
-    assertEquals("Ost, 40.0kr, 12.0 g, 31-12-2024", cheese.toString());
+    assertEquals("ost, 40.0kr, 12.0 g, 31-12-2024", cheese.toString());
   }
 
   @Test
   void testingDecreaseAmount() {
     cheese.decreaseAmount(2.0);
-    assertEquals("Ost, 40.0kr, 8.0 g, 31-12-2024", cheese.toString());
+    assertEquals("ost, 40.0kr, 8.0 g, 31-12-2024", cheese.toString());
   }
 
   @Test
@@ -59,10 +58,10 @@ class GroceryTest {
     assertEquals(1.0, grocery2.getAmount());
     assertEquals(1.0, grocery3.getAmount());
 
-    // For dry units (kg)
-    Grocery grocery4 = new Grocery("Kjøtt", 40, 1000, "mg", expiryDate);
-    Grocery grocery5 = new Grocery("Kjøtt", 40, 1, "g", expiryDate);
-    Grocery grocery6 = new Grocery("Kjøtt", 40, 0.001, "kg", expiryDate);
+    // For dry units (g)
+    Grocery grocery4 = new Grocery("kjøtt", 40, 1000, "mg", expiryDate);
+    Grocery grocery5 = new Grocery("kjøtt", 40, 1, "g", expiryDate);
+    Grocery grocery6 = new Grocery("kjøtt", 40, 0.001, "kg", expiryDate);
 
     assertEquals(1.0, grocery4.getAmount());
     assertEquals(1.0, grocery5.getAmount());

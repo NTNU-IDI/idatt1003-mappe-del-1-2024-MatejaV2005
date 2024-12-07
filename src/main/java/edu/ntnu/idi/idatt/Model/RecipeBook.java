@@ -26,10 +26,9 @@ public class RecipeBook {
    * @throws IllegalArgumentException if the recipe is null or already exists in the cookbook
    */
   public void addRecipe(Recipe recipe) {
-    ExceptionHandling.validateRecipe(recipe, recipes);
+    ExceptionHandling.validateRecipeInRecipeBook(recipe, recipes);
 
     recipes.add(recipe);
-    System.out.println("Recipe \"" + recipe.getNameOfRecipe() + "\" added to the cookbook.");
   }
 
   /**

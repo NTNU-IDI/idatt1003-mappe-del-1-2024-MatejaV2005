@@ -14,47 +14,65 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Class representing a food storage system that can manage groceries by adding, removing,
- * sorting, and calculating the total value of stored groceries, as well as managing expired groceries
+ * The {@code FoodStorage} class provides a system for managing groceries,
+ * including adding, removing, sorting, and handling expired items.
+ *
+ * <p>Key functionalities include:
+ * <ul>
+ *   <li>Registering and updating grocery quantities.</li>
+ *   <li>Removing specific amounts, prioritizing earilest expiry dates.</li>
+ *   <li>Sorting groceries alphabetically.</li>
+ *   <li>Grouping and filtering expired groceries.</li>
+ *   <li>Calculating total values of stored and expired items.</li>
+ * </ul>
+ *
+ * <p>This class is suitable for handling household inventory
+ * or tracking stock in smaller-scale food-related systems.
+ * </p>
  */
 public class FoodStorage {
 
   /**
-   * A map to store groceries by their name, where each grocery name maps to a list of grocery items.
+   * A map to store groceries by their name,
+   * where each grocery name maps to a list of grocery items.
    */
-  private Map<String, List<Grocery>> storage = new HashMap<>();
+  private final Map<String, List<Grocery>> storage = new HashMap<>();
 
   /**
-   * A map to store the expired groceries by their name, where each grocery name maps to a list of grocery items.
+   * A map to store the expired groceries by their name,
+   * where each grocery name maps to a list of grocery items.
    */
-  Map<String, List<Grocery>> expiredStorage = new HashMap<>(); // Map to hold expired groceries
+  private final Map<String, List<Grocery>> expiredStorage = new HashMap<>();
 
 
   /**
    * Adds a grocery item to the storage.
    * If the grocery's name does not exist as a key in the storage, a new entry is created
    * with the name as the key and an empty list as the value, where the grocery is then added.
-   * <p>
-   * If the key already exists:
+   *
+   * <p>If the key already exists:
    * <ul>
-   *   <li>If a grocery with the same name and expiry date exists in the list, their amounts are combined.</li>
+   *   <li>If a grocery with the same name and expiry date exists in the list,
+   *   their amounts are combined.</li>
    *   <li>Otherwise, the new grocery is added to the list.</li>
    * </ul>
    * After adding or updating, the list of groceries is sorted by their earliest expiry date.
-   * <p>
    *
-   * @param groceryToAdd the grocery item to be added to the storage
+   * <p>@param groceryToAdd the grocery item to be added to the storage
    *
    * @throws IllegalArgumentException if the specified Grocery is null
    */
   public void registerToStorage(Grocery groceryToAdd) {
     ExceptionHandling.nullGrocery(groceryToAdd);
 
-    List<Grocery> groceries = storage.computeIfAbsent(groceryToAdd.getName().toLowerCase(), k -> new ArrayList<>());
+    List<Grocery> groceries = storage.computeIfAbsent(
+        groceryToAdd.getName().toLowerCase(),
+        key -> new ArrayList<>());
 
     // Use streams to check if there's an existing grocery item with the same expiry date and unit.
     groceries.stream()
-        .filter(g -> g.getExpiryDate().equals(groceryToAdd.getExpiryDate()) && g.getUnit().equals(groceryToAdd.getUnit()))
+        .filter(g -> g.getExpiryDate()
+            .equals(groceryToAdd.getExpiryDate()) && g.getUnit().equals(groceryToAdd.getUnit()))
         .findFirst()
         .ifPresentOrElse(
             existingGrocery -> existingGrocery.increaseAmount(groceryToAdd.getAmount()),
@@ -67,29 +85,33 @@ public class FoodStorage {
 
   /**
    * Removes a specified amount of a grocery from the storage.
-   * <p>
-   * The removal prioritizes items with the earliest expiry date first.
+   *
+   * <p>The removal prioritizes items with the earliest expiry date first.
    * If the amount to remove exceeds the available quantity of a single item,
    * it continues to the next item in the list until the amount is fully removed.
-   * <p>
-   * If all items of a grocery are removed, the grocery is also removed from the storage.
+   *
+   * <p>If all items of a grocery are removed, the grocery is also removed from the storage.
    *
    * @param groceryToRemove the grocery to remove, identified by its name
    * @param amount the amount to remove from the storage
    * @param unit unit for the amount to be removed
-   * @throws IllegalArgumentException if the specified grocery is not found in storage, the name is null or an empty String
-   * @throws IllegalArgumentException if the amount to remove is greater than the total amount of a specified grocery in storage
+   *
+   * @throws IllegalArgumentException if the grocery name is null, empty, not found in storage,
+   *         or if the amount to remove exceeds the total available quantity.
+   *
    */
   public void removeAmountFromStorage(String groceryToRemove, double amount, String unit) {
     ExceptionHandling.validateName(groceryToRemove);
-    ExceptionHandling.validateAmount(amount);
     ExceptionHandling.validateStorageContainsItem(storage, groceryToRemove);
-    ExceptionHandling.validateAmountToRemove(storage, amount);
+    ExceptionHandling.validateAmount(amount);
+    ExceptionHandling.validateUnitCompatibility(unit, groceryToRemove, storage);
 
     amount = UnitConverter.ConvertUnitAmount(amount, unit);
 
+    // Add exception handling after the amount is normalized and converted
+    ExceptionHandling.validateAmountToRemove(storage, amount, groceryToRemove);
 
-    String key = groceryToRemove.toLowerCase(); // Convert to lowercase for case-insensitive comparison
+    String key = groceryToRemove.toLowerCase();
     List<Grocery> itemsToRemove = storage.get(key);
     Iterator<Grocery> it = itemsToRemove.iterator();
 
@@ -113,44 +135,54 @@ public class FoodStorage {
   }
 
   /**
-   * Converts the storage `HashMap` into a `TreeMap` to sort groceries alphabetically by their keys.
-   * <p>
-   * A `TreeMap` is used because it automatically maintains the keys in sorted order.
-   * This method copies all entries from the `storage` map into a new `TreeMap` instance.
+   * Returns a `TreeMap` containing groceries sorted alphabetically by their names.
    *
-   * @return a `TreeMap` containing the groceries sorted alphabetically by their keys
+   * <p>This method converts the internal `HashMap` storage into a `TreeMap`,
+   * which automatically sorts its keys in natural (alphabetical) order.
+   * This can be useful for displaying groceries in a consistent and sorted manner.
+   * </p>
+   *
+   * @return a `TreeMap` with groceries sorted alphabetically by name
    */
   public Map<String, List<Grocery>> sortGroceries() {
-    Map<String, List<Grocery>> sortedStorage = new TreeMap<>(storage);
-    return sortedStorage;
+    return new TreeMap<>(storage);
   }
 
   /**
-   * Searches for a specific grocery in either the main storage or expired storage based on the provided flag.
-   * <p>
-   * If the grocery is found, it prints a message indicating whether it was found in the main storage or expired storage.
+   * Searches for a specific grocery in either the main storage
+   * or expired storage based on the provided flag.
+   *
+   * <p>If the grocery is found, it prints a message indicating
+   * whether it was found in the main storage or expired storage.
    * If no matching grocery is found, a "not found" message is printed.
    * </p>
    *
    * @param groceryName the name of the grocery to search for.
-   * @param searchExpired a boolean indicating whether to search in expired storage (true) or main storage (false).
-   * @return a list of matching groceries from the selected storage. If no matches are found, an empty list is returned.
+   * @param searchExpired a boolean indicating whether to search in
+   *                      expired storage (true) or main storage (false).
+   * @return a list of matching groceries from the selected storage.
+   *         If no matches are found, an empty list is returned.
    */
   public List<Grocery> findInStorage(String groceryName, boolean searchExpired) {
+    // Validate the grocery name
     ExceptionHandling.validateName(groceryName);
 
     String key = groceryName.toLowerCase();
-    Map<String, List<Grocery>> targetStorage = searchExpired ? expiredStorage : storage; // searches the corresponding storage based on boolean value
+    Map<String, List<Grocery>> targetStorage = searchExpired
+        ? expiredStorage
+        : storage;
 
+    // Filter groceries based on expiry status
     List<Grocery> foundGroceries = targetStorage.getOrDefault(key, new ArrayList<>()).stream()
         .filter(grocery -> searchExpired || !grocery.getExpiryDate().isBefore(LocalDate.now()))
         .toList();
 
     String storageType = searchExpired ? "expired storage" : "storage";
     if (foundGroceries.isEmpty()) {
-      System.out.printf("No groceries found in %s: %s%n \n", storageType, groceryName);
+      System.out.printf("No groceries found in %s: %s%n", storageType, groceryName);
     } else {
-      System.out.printf("Found %s for |%s|:%n", searchExpired ? "expired groceries" : "groceries in storage", groceryName);
+      System.out.printf("Found %s for |%s|:%n",
+          searchExpired ? "expired groceries" : "groceries in storage", groceryName);
       System.out.println("--------------------------------------------");
       foundGroceries.forEach(System.out::println);
       System.out.println();
@@ -165,7 +197,7 @@ public class FoodStorage {
    *
    * @param date the cutoff date for filtering groceries
    * @return a list of groceries expiring before the given date.
-   *         if no groceries aer found before the best-before date, prints a message
+   *         if no groceries are found before the best-before date, prints a message
    */
 
   public List<Grocery> bestBefore(LocalDate date) {
@@ -198,7 +230,7 @@ public class FoodStorage {
    *
    * @return the total value of all groceries as a {@code double}.
    */
-  public double TotalValueOfGroceries() {
+  public double totalValueOfGroceries() {
     return storage.values().stream()
         .flatMap(List::stream)
         .mapToDouble(Grocery::getPrice)
@@ -208,17 +240,20 @@ public class FoodStorage {
   /**
    * Removes all expired groceries from the storage.
    *
-   * <p>This method iterates through each grocery list in the {@code storage} map, checking if each
-   * grocery item is expired using {@link Grocery#isExpired()}. Expired items are removed from the list
-   * using an {@link Iterator} to ensure safe modification during iteration.</p>
+   * <p>This method iterates through the {@code storage} map and removes expired items from each
+   * {@code List<Grocery>} using {@link List#removeIf(java.util.function.Predicate)}. A grocery is
+   * considered expired if {@link Grocery#isExpired()} returns {@code true}.</p>
    *
-   * <p>After execution, the storage will no longer contain expired groceries, but the overall structure
-   * of the {@code storage} map remains unchanged.</p>
+   * <p>After execution, the {@code storage} map will only contain non-expired groceries, while
+   * maintaining the structure of the map itself.</p>
+   *
+   * <p><b>Note:</b> Ensure that the {@code isExpired} method correctly identifies expired groceries
+   * for accurate removal.</p>
    */
   public void removeExpiredGroceries() {
     //Loop variable groceryList for each list in storage.
     for (List<Grocery> groceryList : storage.values()) {
-      groceryList.removeIf(Grocery::isExpired); //TODO: REMEMBER TO CHECK THIS OUT
+      groceryList.removeIf(Grocery::isExpired);
     }
   }
 
@@ -237,7 +272,7 @@ public class FoodStorage {
    * @return a map where keys are grocery names (in lowercase) and values are lists of expired groceries.
    */
 
-  public Map<String, List<Grocery>> FilterAndGroupExpiredGroceries() {
+  public Map<String, List<Grocery>> filterAndGroupExpiredGroceries() {
     List<Grocery> listOfExpiredGroceries = new ArrayList<>(); // Temporary list to store expired groceries
 
     storage.values().stream()
@@ -270,7 +305,7 @@ public class FoodStorage {
   }
 
 
-  //DISPLAY-METHODS____________________________________________________________________________
+  //DISPLAY-METHODS---------------------------------------------------------------------------------
   /**
    * Formats a map of groceries into a readable string representation with a table-like structure.
    * Each grocery name is presented as a header, followed by its details (name, amount, unit, and expiry date)
@@ -338,13 +373,13 @@ public class FoodStorage {
   /**
    * Displays all expired groceries in a formatted string.
    *
-   * <p>This method filters and groups expired groceries using {@link #FilterAndGroupExpiredGroceries()},
+   * <p>This method filters and groups expired groceries using {@link #filterAndGroupExpiredGroceries()},
    * and then formats the resulting map of expired groceries using {@link #formatGroceries(Map)}.</p>
    *
    * @return a formatted string representing all expired groceries, grouped by name.
    */
-  public String DisplayExpiredGroceries() {
-    Map<String, List<Grocery>> expiredGroceriesToDisplay = FilterAndGroupExpiredGroceries();
+  public String displayExpiredGroceries() {
+    Map<String, List<Grocery>> expiredGroceriesToDisplay = filterAndGroupExpiredGroceries();
     return formatGroceries(expiredGroceriesToDisplay);
   }
 
@@ -360,7 +395,7 @@ public class FoodStorage {
    * @param name the name of the grocery to search for
    * @return a list of groceries with the specified name, or an empty list if no groceries are found
    */
-  public List<Grocery> getGroceriesByName(String name) {
+  public List<Grocery> findGroceriesByName(String name) {
     return storage.getOrDefault(name.toLowerCase(), new ArrayList<>());
   }
 

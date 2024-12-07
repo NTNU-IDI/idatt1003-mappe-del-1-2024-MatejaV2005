@@ -103,15 +103,28 @@ public class InputValidation {
 
   public static String getValidItemToRemove(String prompt, Map<String, List<Grocery>> storage) {
     System.out.println(prompt);
-    String input = sc.nextLine().trim(); // Take user input
+    String input = sc.nextLine().trim();
 
     try {
-      // Validate the grocery name using the existing exception method
       ExceptionHandling.validateStorageContainsItem(storage, input);
-      return input; // Return the valid input if validation passes
+      return input;
     } catch (IllegalArgumentException e) {
       System.out.println("Error: " + e.getMessage());
       return getValidItemToRemove(prompt, storage); // Retry if validation fails
+    }
+  }
+
+  public static String getValidCompatibleUnit(String prompt, String groceryName, Map<String, List<Grocery>> storage) {
+    System.out.println(prompt);
+    String inputUnit = sc.nextLine().trim();
+
+    try {
+      // Validate that the unit is compatible with the grocery in storage
+      ExceptionHandling.validateUnitCompatibility(inputUnit, groceryName, storage);
+      return inputUnit; // Return the valid unit if validation passes
+    } catch (IllegalArgumentException e) {
+      System.out.println("Error: " + e.getMessage());
+      return getValidCompatibleUnit(prompt, groceryName, storage); // Retry if validation fails
     }
   }
 
@@ -123,6 +136,7 @@ public class InputValidation {
       double amount = Double.parseDouble(input);
       double standardizedAmount = UnitConverter.ConvertUnitAmount(amount, unit);
       ExceptionHandling.validateAmountToRemove(storage, standardizedAmount, itemName);
+      ExceptionHandling.validateAmount(standardizedAmount);
       return amount;
 
     } catch (NumberFormatException e) {

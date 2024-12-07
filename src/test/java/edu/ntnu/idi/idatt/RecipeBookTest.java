@@ -101,7 +101,7 @@ class RecipeBookTest {
     recipeBook.addRecipe(recipe);
     List<Recipe> availableRecipes = recipeBook.getAvailableRecipes(storage);
     assertEquals(1, availableRecipes.size());
-    assertEquals("Spaghetti Bolognese", availableRecipes.get(0).getNameOfRecipe());
+    assertEquals("Spaghetti Bolognese", availableRecipes.getFirst().getNameOfRecipe());
   }
 
   @Test

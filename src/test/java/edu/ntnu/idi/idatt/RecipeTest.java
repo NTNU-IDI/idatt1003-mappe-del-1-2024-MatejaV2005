@@ -59,8 +59,8 @@ class RecipeTest {
 
     recipe.getMissingIngredients();
 
-    assertEquals(200.0, storage.getGroceriesByName("spaghetti").stream().mapToDouble(Grocery::getAmount).sum());
-    assertEquals(0.1, storage.getGroceriesByName("tomato Sauce").stream().mapToDouble(Grocery::getAmount).sum());
+    assertEquals(200.0, storage.findGroceriesByName("spaghetti").stream().mapToDouble(Grocery::getAmount).sum());
+    assertEquals(0.1, storage.findGroceriesByName("tomato Sauce").stream().mapToDouble(Grocery::getAmount).sum());
   }
 
 
@@ -84,39 +84,27 @@ class RecipeTest {
 
   @Test
   void testInvalidIngredientUnit() {
-    assertThrows(IllegalArgumentException.class, () -> {
-      new IngredientDetail(200, "Ounces");
-    }, "Expected exception for unsupported unit 'Ounces'");
+    assertThrows(IllegalArgumentException.class, () -> new IngredientDetail(200, "Ounces"), "Expected exception for unsupported unit 'Ounces'");
 
-    assertThrows(IllegalArgumentException.class, () -> {
-      new IngredientDetail(200, "");
-    }, "Expected exception for empty unit");
+    assertThrows(IllegalArgumentException.class, () -> new IngredientDetail(200, ""), "Expected exception for empty unit");
 
-    assertThrows(IllegalArgumentException.class, () -> {
-      new IngredientDetail(200, null);
-    }, "Expected exception for null unit");
+    assertThrows(IllegalArgumentException.class, () -> new IngredientDetail(200, null), "Expected exception for null unit");
   }
 
   @Test
   void testNegativeIngredientAmount() {
-    assertThrows(IllegalArgumentException.class, () -> {
-      new IngredientDetail(-200, "g");
-    }, "Expected exception for negative ingredient amount");
+    assertThrows(IllegalArgumentException.class, () -> new IngredientDetail(-200, "g"), "Expected exception for negative ingredient amount");
   }
 
   // set-method throws exception
   @Test
   void validateAndSetName_ThrowsException() {
-    assertThrows(IllegalArgumentException.class, () -> {
-      new Recipe(" ", "test", "test", Map.of());
-    }, "Expected exception for invalid recipe name (empty or whitespace)");
+    assertThrows(IllegalArgumentException.class, () -> new Recipe(" ", "test", "test", Map.of()), "Expected exception for invalid recipe name (empty or whitespace)");
   }
 
   @Test
   void validateAndSetIngredients_throwsException() {
-    assertThrows(IllegalArgumentException.class, () -> {
-      new Recipe("Empty Recipe", "This recipe has no ingredients.",
-          "No process needed.", Map.of());
-    }, "Expected exception for missing ingredients in recipe");
+    assertThrows(IllegalArgumentException.class, () -> new Recipe("Empty Recipe", "This recipe has no ingredients.",
+        "No process needed.", Map.of()), "Expected exception for missing ingredients in recipe");
   }
 }

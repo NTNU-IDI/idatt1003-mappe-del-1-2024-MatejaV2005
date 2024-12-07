@@ -27,7 +27,7 @@ public class FoodStorageTest {
 
     foodStorage.registerToStorage(grocery);
 
-    List<Grocery> milkGroceries = foodStorage.getGroceriesByName("milk");  // Use lowercase here
+    List<Grocery> milkGroceries = foodStorage.findGroceriesByName("milk");  // Use lowercase here
     assertNotNull(milkGroceries);
     assertEquals(1, milkGroceries.size());
     assertEquals(1.5, grocery.getAmount());
@@ -43,7 +43,7 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(sameGrocery);
     foodStorage.registerToStorage(otherGrocery);
 
-    List<Grocery> milkGroceries = foodStorage.getGroceriesByName("milk");  // Use lowercase here
+    List<Grocery> milkGroceries = foodStorage.findGroceriesByName("milk");  // Use lowercase here
     assertEquals(2, milkGroceries.size());
     assertEquals(3.0, milkGroceries.getFirst().getAmount());
   }
@@ -58,7 +58,7 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(grocery2);
     foodStorage.registerToStorage(grocery3);
 
-    List<Grocery> milkGroceries = foodStorage.getGroceriesByName("milk");  // Use lowercase here
+    List<Grocery> milkGroceries = foodStorage.findGroceriesByName("milk");  // Use lowercase here
 
     assertEquals(grocery3, milkGroceries.get(0));
     assertEquals(grocery2, milkGroceries.get(1));
@@ -72,7 +72,7 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(grocery1);
     foodStorage.removeAmountFromStorage("milk", 4.0, "l");
 
-    List<Grocery> groceries = foodStorage.getGroceriesByName("milk");
+    List<Grocery> groceries = foodStorage.findGroceriesByName("milk");
     assertEquals(1, groceries.getFirst().getAmount());
   }
 
@@ -85,7 +85,7 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(grocery2);
     foodStorage.removeAmountFromStorage("milk", 50.0, "dl");  // Use lowercase here
 
-    List<Grocery> groceries = foodStorage.getGroceriesByName("milk");  // Use lowercase here
+    List<Grocery> groceries = foodStorage.findGroceriesByName("milk");  // Use lowercase here
 
     assertEquals(grocery2, groceries.getFirst());
     assertEquals(1, groceries.size());
@@ -100,7 +100,7 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(grocery2);
     foodStorage.removeAmountFromStorage("milk", 9.0, "l");  // Use lowercase here
 
-    List<Grocery> groceries = foodStorage.getGroceriesByName("milk");  // Use lowercase here
+    List<Grocery> groceries = foodStorage.findGroceriesByName("milk");  // Use lowercase here
 
     assertEquals(1, groceries.getFirst().getAmount());
   }
@@ -252,10 +252,10 @@ public class FoodStorageTest {
     foodStorage.removeExpiredGroceries();
 
     // Assert
-    assertTrue(foodStorage.getGroceriesByName("Milk").isEmpty(), "Milk should be removed as it is expired");
-    assertTrue(foodStorage.getGroceriesByName("Cheese").isEmpty(), "Cheese should be removed as it is expired");
+    assertTrue(foodStorage.findGroceriesByName("Milk").isEmpty(), "Milk should be removed as it is expired");
+    assertTrue(foodStorage.findGroceriesByName("Cheese").isEmpty(), "Cheese should be removed as it is expired");
 
-    List<Grocery> remainingBread = foodStorage.getGroceriesByName("Bread");
+    List<Grocery> remainingBread = foodStorage.findGroceriesByName("Bread");
     assertEquals(1, remainingBread.size(), "Only Bread should remain in storage");
     assertEquals("bread", remainingBread.getFirst().getName(), "Remaining grocery should be Bread");
   }
@@ -386,7 +386,7 @@ public class FoodStorageTest {
     Map<String, List<Grocery>> expiredGroceries = foodStorage.filterAndGroupExpiredGroceries();
     foodStorage.removeExpiredGroceries();
     assertFalse(expiredGroceries.isEmpty(), "Should move expired groceries to the expired list");
-    assertTrue(foodStorage.getGroceriesByName("Apple").isEmpty(), "Should remove expired groceries from storage");
+    assertTrue(foodStorage.findGroceriesByName("Apple").isEmpty(), "Should remove expired groceries from storage");
   }
 
   @Test
