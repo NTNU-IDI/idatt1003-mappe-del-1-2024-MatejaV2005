@@ -70,9 +70,9 @@ public class FoodStorageTest {
     Grocery grocery1 = new Grocery("Milk", 35.0, 5.0, "l", LocalDate.now());
 
     foodStorage.registerToStorage(grocery1);
-    foodStorage.removeAmountFromStorage("milk", 4.0, "l");  // Use lowercase here
+    foodStorage.removeAmountFromStorage("milk", 4.0, "l");
 
-    List<Grocery> groceries = foodStorage.getGroceriesByName("milk");  // Use lowercase here
+    List<Grocery> groceries = foodStorage.getGroceriesByName("milk");
     assertEquals(1, groceries.get(0).getAmount());
   }
 
@@ -83,7 +83,7 @@ public class FoodStorageTest {
 
     foodStorage.registerToStorage(grocery1);
     foodStorage.registerToStorage(grocery2);
-    foodStorage.removeAmountFromStorage("milk", 5.0, "l");  // Use lowercase here
+    foodStorage.removeAmountFromStorage("milk", 50.0, "dl");  // Use lowercase here
 
     List<Grocery> groceries = foodStorage.getGroceriesByName("milk");  // Use lowercase here
 
@@ -133,36 +133,42 @@ public class FoodStorageTest {
   }
 
   @Test
-  void testingTheInStorageMethod() {
-    // Setup
-    Grocery grocery1 = new Grocery("Milk", 35.0, 5.0, "l", LocalDate.now().plusDays(2));
-    Grocery grocery2 = new Grocery("Milk", 35.0, 4.0, "l", LocalDate.now());
-    Grocery grocery3 = new Grocery("Cheese", 35.0, 2.0, "kg", LocalDate.now().plusDays(2));
-    Grocery grocery4 = new Grocery("Meat", 35.0, 2.0, "kg", LocalDate.now().plusDays(4));
+  void testFindGroceryInNormalStorage() {
+    // Setup: Add non-expired groceries
+    foodStorage.registerToStorage(new Grocery("Milk", 35.0, 5.0, "l", LocalDate.now().plusDays(2))); // Not expired
+    foodStorage.registerToStorage(new Grocery("Cheese", 35.0, 2.0, "kg", LocalDate.now().plusDays(2))); // Not expired
 
-    foodStorage.registerToStorage(grocery1);
-    foodStorage.registerToStorage(grocery2);
-    foodStorage.registerToStorage(grocery3);
-    foodStorage.registerToStorage(grocery4);
+    // Test normal storage lookup
+    List<Grocery> normalMilk = foodStorage.findInStorage("milk", false);
+    assertEquals(1, normalMilk.size(), "Milk should have 1 non-expired entry.");
+    assertEquals("milk", normalMilk.get(0).getName(), "Name should match.");
 
-    // Test for "Milk" (should return grocery1 and grocery2)
-    List<Grocery> expectedMilk = List.of(grocery2, grocery1);  // Sorted by date (grocery2 before grocery1)
-    List<Grocery> actualMilk = foodStorage.inStorage("milk");  // Use lowercase here
-    assertEquals(expectedMilk, actualMilk, "Milk groceries do not match!");
+    List<Grocery> normalCheese = foodStorage.findInStorage("cheese", false);
+    assertEquals(1, normalCheese.size(), "Cheese should have 1 non-expired entry.");
+    assertEquals("cheese", normalCheese.get(0).getName(), "Name should match.");
 
-    // Test for "Cheese" (should return grocery3)
-    List<Grocery> expectedCheese = List.of(grocery3);
-    List<Grocery> actualCheese = foodStorage.inStorage("cheese");  // Use lowercase here
-    assertEquals(expectedCheese, actualCheese, "Cheese groceries do not match!");
+    // Test for groceries not in storage
+    List<Grocery> notFound = foodStorage.findInStorage("apple", false);
+    assertTrue(notFound.isEmpty(), "Apple should not be found in normal storage.");
+  }
 
-    // Test for "Meat" (should return grocery4)
-    List<Grocery> expectedMeat = List.of(grocery4);
-    List<Grocery> actualMeat = foodStorage.inStorage("meat");  // Use lowercase here
-    assertEquals(expectedMeat, actualMeat, "Meat groceries do not match!");
+  @Test
+  void testFindGroceryInExpiredStorage() {
+    // Setup: Add expired groceries and process them
+    foodStorage.registerToStorage(new Grocery("Milk", 35.0, 4.0, "l", LocalDate.now().minusDays(1))); // Expired
+    foodStorage.filterAndGroupExpiredGroceries();
 
-    // Test for a grocery not in storage (e.g., "Apple")
-    List<Grocery> actualApple = foodStorage.inStorage("apple");  // Use lowercase here
-    assertTrue(actualApple.isEmpty(), "Apple should not be found!");
+    // Test expired storage lookup
+    List<Grocery> expiredMilk = foodStorage.findInStorage("milk", true);
+    assertEquals(1, expiredMilk.size(), "Milk should have 1 expired entry.");
+    assertEquals("milk", expiredMilk.get(0).getName(), "Name should match.");
+
+    List<Grocery> expiredCheese = foodStorage.findInStorage("cheese", true);
+    assertTrue(expiredCheese.isEmpty(), "Cheese should not have any expired entries.");
+
+    // Test for groceries not in expired storage
+    List<Grocery> notFoundExpired = foodStorage.findInStorage("apple", true);
+    assertTrue(notFoundExpired.isEmpty(), "Apple should not be found in expired storage.");
   }
 
   @Test
@@ -190,7 +196,7 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(grocery2);
     foodStorage.registerToStorage(grocery3);
 
-    assertEquals(105.0, foodStorage.TotalValueOfGroceries());
+    assertEquals(105.0, foodStorage.totalValueOfGroceries());
   }
 
   @Test
@@ -203,7 +209,9 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(grocery2);
     foodStorage.registerToStorage(grocery3);
 
-    assertEquals(100.0, foodStorage.TotalValueOfExpiredGroceries());
+    foodStorage.filterAndGroupExpiredGroceries();
+
+    assertEquals(100.0, foodStorage.totalValueOfExpiredGroceries());
   }
 
   @Test
@@ -218,7 +226,7 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(freshBread);
 
     // Act
-    Map<String, List<Grocery>> expiredGroceries = foodStorage.FilterAndGroupExpiredGroceries();
+    Map<String, List<Grocery>> expiredGroceries = foodStorage.filterAndGroupExpiredGroceries();
 
     // Assert
     assertEquals(2, expiredGroceries.size(), "There should be 2 categories of expired groceries");
@@ -249,7 +257,7 @@ public class FoodStorageTest {
 
     List<Grocery> remainingBread = foodStorage.getGroceriesByName("Bread");
     assertEquals(1, remainingBread.size(), "Only Bread should remain in storage");
-    assertEquals("Bread", remainingBread.get(0).getName(), "Remaining grocery should be Bread");
+    assertEquals("bread", remainingBread.get(0).getName(), "Remaining grocery should be Bread");
   }
 
 
@@ -264,6 +272,16 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(grocery2);
 
     assertThrows(IllegalArgumentException.class, () -> foodStorage.removeAmountFromStorage("Milk", 11.0, "l"));
+  }
+
+  @Test
+  void testMismatchingUnitsForRemoval() {
+    Grocery grocery1 = new Grocery("Milk", 35.0, 5.0, "l", LocalDate.now());
+
+    foodStorage.registerToStorage(grocery1);
+
+    assertThrows(IllegalArgumentException.class, () -> foodStorage.removeAmountFromStorage("Milk", 4.0, "g"));
+
   }
 
   @Test
@@ -306,13 +324,36 @@ public class FoodStorageTest {
   }
 
   @Test
-  public void testInStorageInvalidName() {
+  void SearchForGroceryNotInStorage() {
     FoodStorage foodStorage = new FoodStorage();
-
     foodStorage.registerToStorage(new Grocery("Apple", 2.0, 1.0, "kg", LocalDate.of(2024, 12, 31)));
 
-    List<Grocery> groceries = foodStorage.inStorage("Banana");
-    assertTrue(groceries.isEmpty(), "Should return an empty list when the grocery is not found");
+    List<Grocery> result = foodStorage.findInStorage("Banana", false);
+    assertTrue(result.isEmpty(), "Should return an empty list when the name is an empty string.");
+
+  }
+
+  @Test
+  void testFindInStorageNonExistentGrocery() {
+    FoodStorage foodStorage = new FoodStorage();
+    foodStorage.registerToStorage(new Grocery("Apple", 2.0, 1.0, "kg", LocalDate.of(2024, 12, 31)));
+
+    List<Grocery> result = foodStorage.findInStorage("Banana", false);
+    assertTrue(result.isEmpty(), "Should return an empty list when the grocery is not found in normal storage.");
+
+    result = foodStorage.findInStorage("Banana", true);
+    assertTrue(result.isEmpty(), "Should return an empty list when the grocery is not found in expired storage.");
+  }
+
+  @Test
+  void testFindInStorageWithEmptyStorage() {
+    FoodStorage foodStorage = new FoodStorage();
+
+    List<Grocery> result = foodStorage.findInStorage("Apple", false);
+    assertTrue(result.isEmpty(), "Should return an empty list when normal storage is empty.");
+
+    result = foodStorage.findInStorage("Apple", true);
+    assertTrue(result.isEmpty(), "Should return an empty list when expired storage is empty.");
   }
 
   @Test
@@ -330,7 +371,7 @@ public class FoodStorageTest {
   public void testTotalValueOfGroceriesEmptyStorage() {
     FoodStorage foodStorage = new FoodStorage();
 
-    double totalValue = foodStorage.TotalValueOfGroceries();
+    double totalValue = foodStorage.totalValueOfGroceries();
     assertEquals(0.0, totalValue, "Total value should be 0.0 when storage is empty");
   }
 
@@ -340,7 +381,7 @@ public class FoodStorageTest {
 
     foodStorage.registerToStorage(new Grocery("Apple", 2.0, 1.0, "kg", LocalDate.of(2025, 12, 31)));
 
-    Map<String, List<Grocery>> expiredGroceries = foodStorage.FilterAndGroupExpiredGroceries();
+    Map<String, List<Grocery>> expiredGroceries = foodStorage.filterAndGroupExpiredGroceries();
     assertTrue(expiredGroceries.isEmpty(), "Should return an empty map when there are no expired groceries");
   }
 
@@ -352,19 +393,19 @@ public class FoodStorageTest {
     foodStorage.registerToStorage(new Grocery("Apple", 2.0, 1.0, "kg", LocalDate.of(2023, 12, 31)));
 
     // Checking before calling moveToExpiredGroceries
-    Map<String, List<Grocery>> expiredGroceries = foodStorage.FilterAndGroupExpiredGroceries();
+    Map<String, List<Grocery>> expiredGroceries = foodStorage.filterAndGroupExpiredGroceries();
     foodStorage.removeExpiredGroceries();
     assertFalse(expiredGroceries.isEmpty(), "Should move expired groceries to the expired list");
     assertTrue(foodStorage.getGroceriesByName("Apple").isEmpty(), "Should remove expired groceries from storage");
   }
 
   @Test
-  public void testTotalValueOfExpiredGroceriesNotExpired() {
+  public void testTotalValueOfExpiredGroceries_NonExpired() {
     FoodStorage foodStorage = new FoodStorage();
 
     foodStorage.registerToStorage(new Grocery("Apple", 2.0, 1.0, "kg", LocalDate.of(2025, 12, 31)));
 
-    double totalValue = foodStorage.TotalValueOfExpiredGroceries();
+    double totalValue = foodStorage.totalValueOfExpiredGroceries();
     assertEquals(0.0, totalValue, "Total value of expired groceries should be 0.0 when there are no expired groceries");
   }
 
