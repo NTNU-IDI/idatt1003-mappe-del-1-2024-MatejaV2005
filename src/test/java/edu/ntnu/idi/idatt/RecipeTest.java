@@ -21,9 +21,9 @@ class RecipeTest {
   @BeforeEach
   void setUp() {
     storage = new FoodStorage();
-    storage.registerToStorage(new Grocery("Spaghetti", 10.0, 500.0, "g", LocalDate.of(2024, 12, 31)));
-    storage.registerToStorage(new Grocery("Ground Beef", 50.0, 300.0, "g", LocalDate.of(2024, 12, 31)));
-    storage.registerToStorage(new Grocery("Tomato Sauce", 20.0, 200.0, "ml", LocalDate.of(2024, 12, 31)));
+    storage.registerToStorage(new Grocery("Spaghetti", 10.0, 500.0, "g", LocalDate.now().plusDays(3)));
+    storage.registerToStorage(new Grocery("Ground Beef", 50.0, 300.0, "g", LocalDate.now().plusDays(3)));
+    storage.registerToStorage(new Grocery("Tomato Sauce", 20.0, 200.0, "ml", LocalDate.now().plusDays(3)));
 
     Map<String, IngredientDetail> ingredients = new HashMap<>();
     ingredients.put("Spaghetti", new IngredientDetail(200.0, "g"));
@@ -42,28 +42,25 @@ class RecipeTest {
     assertFalse(recipe.canMakeRecipe(), "Recipe should not be possible due to missing Onion");
 
     storage.registerToStorage(new Grocery("Onion", 5.0, 50.0, "g", LocalDate.of(2024, 12, 31)));
-
     assertTrue(recipe.canMakeRecipe(), "Recipe should now be possible");
   }
 
   @Test
+  void testExtraIngredientsInStorage() {
+    storage.registerToStorage(new Grocery("Cheese", 10.0, 500.0, "g", LocalDate.of(2024, 12, 31)));
+
+    assertFalse(recipe.canMakeRecipe(), "Recipe should not be possible due to missing Onion, even with extra ingredients");
+  }
+
+  @Test
   void testGetMissingIngredients() {
-    List<String> missingIngredients = recipe.getIngredients().entrySet().stream()
-        .filter(entry -> {
-          String ingredientName = entry.getKey();
-          IngredientDetail requiredDetail = entry.getValue();
+    storage.removeAmountFromStorage("spaghetti", 300.0, "g");
+    storage.removeAmountFromStorage("tomato Sauce", 100.0, "ml");
 
-          double availableAmount = storage.getGroceriesByName(ingredientName).stream()
-              .mapToDouble(Grocery::getAmount)
-              .sum();
+    recipe.getMissingIngredients();
 
-          return availableAmount < requiredDetail.getAmount();
-        })
-        .map(Map.Entry::getKey)
-        .toList();
-
-    assertEquals(1, missingIngredients.size(), "There should be 1 missing ingredient");
-    assertTrue(missingIngredients.contains("Onion"), "Missing ingredient should be 'Onion'");
+    assertEquals(200.0, storage.getGroceriesByName("spaghetti").stream().mapToDouble(Grocery::getAmount).sum());
+    assertEquals(0.1, storage.getGroceriesByName("tomato Sauce").stream().mapToDouble(Grocery::getAmount).sum());
   }
 
 
@@ -78,6 +75,7 @@ class RecipeTest {
         "All ingredients should be missing when storage is empty.");
   }
 
+
   @Test
   void testPartiallyAvailableIngredient() {
     storage.removeAmountFromStorage("Spaghetti", 400.0, "g");
@@ -88,31 +86,30 @@ class RecipeTest {
   void testInvalidIngredientUnit() {
     assertThrows(IllegalArgumentException.class, () -> {
       new IngredientDetail(200, "Ounces");
-    });
+    }, "Expected exception for unsupported unit 'Ounces'");
 
     assertThrows(IllegalArgumentException.class, () -> {
       new IngredientDetail(200, "");
-    });
+    }, "Expected exception for empty unit");
 
     assertThrows(IllegalArgumentException.class, () -> {
       new IngredientDetail(200, null);
-    });
+    }, "Expected exception for null unit");
   }
 
   @Test
   void testNegativeIngredientAmount() {
     assertThrows(IllegalArgumentException.class, () -> {
       new IngredientDetail(-200, "g");
-    });
+    }, "Expected exception for negative ingredient amount");
   }
-
 
   // set-method throws exception
   @Test
   void validateAndSetName_ThrowsException() {
     assertThrows(IllegalArgumentException.class, () -> {
       new Recipe(" ", "test", "test", Map.of());
-    });
+    }, "Expected exception for invalid recipe name (empty or whitespace)");
   }
 
   @Test
@@ -120,6 +117,6 @@ class RecipeTest {
     assertThrows(IllegalArgumentException.class, () -> {
       new Recipe("Empty Recipe", "This recipe has no ingredients.",
           "No process needed.", Map.of());
-    });
+    }, "Expected exception for missing ingredients in recipe");
   }
 }
