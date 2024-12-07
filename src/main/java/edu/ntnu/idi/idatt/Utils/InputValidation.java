@@ -115,18 +115,22 @@ public class InputValidation {
     }
   }
 
-  public static double getValidAmountToRemove(String prompt, Map<String, List<Grocery>> storage, String itemName) {
+  public static double getValidAmountToRemove(String prompt, Map<String, List<Grocery>> storage, String itemName, String unit) {
     System.out.println(prompt);
     String input = sc.nextLine().trim();
 
-
     try {
       double amount = Double.parseDouble(input);
-      ExceptionHandling.validateAmountToRemove(storage, amount, itemName);
+      double standardizedAmount = UnitConverter.ConvertUnitAmount(amount, unit);
+      ExceptionHandling.validateAmountToRemove(storage, standardizedAmount, itemName);
       return amount;
+
+    } catch (NumberFormatException e) {
+      System.out.println("Error: Amount must be a valid number.");
+      return getValidAmountToRemove(prompt, storage, itemName, unit);
     } catch (IllegalArgumentException e) {
       System.out.println("Error: " + e.getMessage());
-      return getValidAmountToRemove(prompt, storage, itemName);
+      return getValidAmountToRemove(prompt, storage, itemName, unit);
     }
   }
 

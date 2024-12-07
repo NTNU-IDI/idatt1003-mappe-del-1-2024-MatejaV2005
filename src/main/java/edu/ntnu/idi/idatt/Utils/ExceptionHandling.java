@@ -1,6 +1,8 @@
 package edu.ntnu.idi.idatt.Utils;
 
+import edu.ntnu.idi.idatt.Model.FoodStorage;
 import edu.ntnu.idi.idatt.Model.Grocery;
+import edu.ntnu.idi.idatt.Model.IngredientDetail;
 import edu.ntnu.idi.idatt.Model.Recipe;
 import java.time.LocalDate;
 import java.util.List;
@@ -61,10 +63,16 @@ public class ExceptionHandling {
   }
 
 
-  //FOR FOODSTORAGE-CLASS----------------------------------------------------------------------------------------------------
+  //FOR FOODSTORAGE-CLASS----------------------------------------------
   public static void nullGrocery(Grocery grocery) {
-    if(grocery == null) {
+    if (grocery == null) {
       throw new IllegalArgumentException("Grocery cannot be null.");
+    }
+  }
+
+  public static void nullStorage(FoodStorage storage) {
+    if (storage == null) {
+      throw new IllegalArgumentException("Storage cannot be null.");
     }
   }
 
@@ -74,13 +82,14 @@ public class ExceptionHandling {
     }
   }
 
-  public static void validateAmountToRemove(Map<String, List<Grocery>> storage, Double amount) {
+  public static void validateAmountToRemove(Map<String, List<Grocery>> storage, Double amountToRemove, String itemName) {
     double totalAmount = storage.values().stream()
         .flatMap(List::stream)
+        .filter(g -> g.getName().equalsIgnoreCase(itemName))
         .mapToDouble(Grocery::getAmount)
         .sum();
 
-    if (amount >= totalAmount) {
+    if (amountToRemove > totalAmount) {
       throw new IllegalArgumentException("Amount to be removed cannot be greater than the current total amount of the grocery.");
     }
   }
@@ -89,6 +98,12 @@ public class ExceptionHandling {
   public static void validateRecipe(Recipe recipe) {
     if (recipe == null) {
       throw new IllegalArgumentException("Recipe cannot be null.");
+    }
+  }
+
+  public static void validateIngredients(Map<String, IngredientDetail> ingredients) {
+    if (ingredients == null || ingredients.isEmpty()) {
+      throw new IllegalArgumentException("Ingredients map cannot be null or empty.");
     }
   }
 
