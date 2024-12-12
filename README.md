@@ -4,7 +4,7 @@
 # Portfolio project IDATT1003
 This file uses Mark Down syntax. For more information see [here](https://www.markdownguide.org/basic-syntax/).
 
-[//]: # (TODO: Fill inn your name and student ID)
+
 
 STUDENT NAME = Mateja Vasic  
 STUDENT ID = 10058
@@ -36,7 +36,7 @@ Java JDK version 21
 ## Link to repository
 https://github.com/NTNU-IDI/idatt1003-mappe-del-1-2024-MatejaV2005
 
-[//]: # (TODO: Include a link to your GitHub repository here.)
+
 
 ## How to Run the Project
 
@@ -61,9 +61,17 @@ To run the project, ensure you are using at least **Java JDK version 21** ([Down
 Open the test class you would like to run from the `src/test/java/edu/ntnu/idi/idatt/` directory.
 run the file.
 OR run all the tests by right-clicking on the `src/test/java/` and press "run all test"
-[//]: # (TODO: Describe how to run the tests here.)
+
 
 ## References
-
-[//]: # (TODO: Include references here, if any. For example, if you have used code from the course book, include a reference to the chapter.
-Or if you have used code from a website or other source, include a link to the source.)
+https://agilemanifesto.org
+https://www.baeldung.com/solid-principles
+https://www.nature.com/articles/s43016-021-00225-9
+https://www.baeldung.com/java-treemap-vs-hashmap
+https://www.geeksforgeeks.org/software-engineering-coupling-and-cohesion/
+https://www.javatpoint.com/collections-in-java
+https://www.melk.no/melkefakta/baerekraft/matsvinn
+https://www.unep.org/topics/chemicals-and-pollution-action/circularity-sectors/food-and-food-waste
+https://www.youtube.com/watch?v=KF7RQMSRLQ0
+Forelesninger
+Me, myself and i
