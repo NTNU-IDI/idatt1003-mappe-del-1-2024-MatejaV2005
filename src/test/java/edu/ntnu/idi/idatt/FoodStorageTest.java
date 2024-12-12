@@ -3,8 +3,8 @@ package edu.ntnu.idi.idatt;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-import edu.ntnu.idi.idatt.Model.FoodStorage;
-import edu.ntnu.idi.idatt.Model.Grocery;
+import edu.ntnu.idi.idatt.model.FoodStorage;
+import edu.ntnu.idi.idatt.model.Grocery;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

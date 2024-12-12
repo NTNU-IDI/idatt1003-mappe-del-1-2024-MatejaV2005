@@ -1,20 +1,22 @@
-package edu.ntnu.idi.idatt.Model;
+package edu.ntnu.idi.idatt.model;
 
-import edu.ntnu.idi.idatt.Utils.ExceptionHandling;
+import edu.ntnu.idi.idatt.utils.ExceptionHandling;
 import java.util.Map;
 
 /**
  * Represents a recipe for a dish or meal.
- * A recipe contains a name, description, cooking process, and a list of ingredients with their required amounts.
- * It also interacts with a {@link FoodStorage} to check if enough ingredients are available to prepare the dish.
+ * A recipe contains a name, description, cooking process,
+ * and a list of ingredients with their required amounts.
+ * It also interacts with a {@link FoodStorage}
+ * to check if enough ingredients are available to prepare the dish.
  */
 public class Recipe {
 
-  private final String nameOfRecipe; // The name of the recipe
-  private final String description; // A brief description of the recipe
-  private final String process; // Step-by-step instructions for the recipe
-  private final Map<String, IngredientDetail> ingredients; // Map of ingredient names to their details
-  public FoodStorage storage; // Storage instance for checking available groceries
+  private final String nameOfRecipe;
+  private final String description;
+  private final String process;
+  private final Map<String, IngredientDetail> ingredients;
+  public FoodStorage storage;
 
   /**
    * Constructs a Recipe object with the specified details.
@@ -22,10 +24,15 @@ public class Recipe {
    * @param nameOfRecipe the name of the recipe
    * @param description  a brief description of the recipe
    * @param process      the step-by-step cooking process for the recipe
-   * @param ingredients  a map of ingredients required for the recipe, where the key is the ingredient name,
+   * @param ingredients  a map of ingredients required for the recipe,
+   *                     where the key is the ingredient name,
    *                     and the value is the required amount
+   *
    * @throws IllegalArgumentException if the name, description, or process are invalid
    */
+
+  // Suppressed line length check as breaking the method definition reduces readability
+  @SuppressWarnings("checkstyle:LineLength")
   public Recipe(String nameOfRecipe, String description, String process, Map<String, IngredientDetail> ingredients) {
     this.nameOfRecipe = validateAndSetName(nameOfRecipe);
     this.description = validateAndSetDescription(description);
@@ -58,7 +65,8 @@ public class Recipe {
 
   /**
    * validates and sets the instance for recipe
-   * This allows the recipe to check available ingredients against the specified {@link FoodStorage}.
+   * This allows the recipe to check available ingredients against
+   * the specified {@link FoodStorage}.
    *
    * @param storage the {@link FoodStorage} instance to associate with the recipe.
    * @throws IllegalArgumentException if the provided storage is null
@@ -109,8 +117,13 @@ public class Recipe {
    *
    * @param ingredients a map of ingredient names to their respective details
    * @return the validated map of ingredients
-   * @throws IllegalArgumentException if the ingredients map is null, empty, or contains invalid data
+   * @throws IllegalArgumentException if the ingredients map is null, empty,
+   *         or contains invalid data
+   *
    */
+
+  // Suppressed line length check as breaking the method definition reduces readability
+  @SuppressWarnings("checkstyle:LineLength")
   private Map<String, IngredientDetail> validateAndSetIngredients(Map<String, IngredientDetail> ingredients) {
     ExceptionHandling.validateIngredients(ingredients);
     return ingredients;
@@ -142,7 +155,10 @@ public class Recipe {
 
       if (availableAmount < requiredDetail.getAmount()) {
         double missingAmount = requiredDetail.getAmount() - availableAmount;
-        System.out.printf("- %s: Missing %.2f %s%n", ingredientName, missingAmount, requiredDetail.getUnit());
+        System.out.printf("- %s: Missing %.2f %s%n",
+            ingredientName,
+            missingAmount,
+            requiredDetail.getUnit());
       }
     });
   }

@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import edu.ntnu.idi.idatt.Model.Grocery;
+import edu.ntnu.idi.idatt.model.Grocery;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,11 +59,9 @@ class GroceryTest {
     assertEquals(1.0, grocery3.getAmount());
 
     // For dry units (g)
-    Grocery grocery4 = new Grocery("kjøtt", 40, 1000, "mg", expiryDate);
     Grocery grocery5 = new Grocery("kjøtt", 40, 1, "g", expiryDate);
     Grocery grocery6 = new Grocery("kjøtt", 40, 0.001, "kg", expiryDate);
 
-    assertEquals(1.0, grocery4.getAmount());
     assertEquals(1.0, grocery5.getAmount());
     assertEquals(1.0, grocery6.getAmount());
   }

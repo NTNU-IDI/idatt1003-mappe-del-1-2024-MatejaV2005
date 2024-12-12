@@ -1,6 +1,6 @@
-package edu.ntnu.idi.idatt.Model;
+package edu.ntnu.idi.idatt.model;
 
-import edu.ntnu.idi.idatt.Utils.ExceptionHandling;
+import edu.ntnu.idi.idatt.utils.ExceptionHandling;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +26,8 @@ public class RecipeBook {
    * @throws IllegalArgumentException if the recipe is null or already exists in the cookbook
    */
   public void addRecipe(Recipe recipe) {
-    ExceptionHandling.validateRecipeInRecipeBook(recipe, recipes);
+    ExceptionHandling.nullRecipe(recipe);
+    ExceptionHandling.validateExistingRecipe(recipe, recipes);
 
     recipes.add(recipe);
   }

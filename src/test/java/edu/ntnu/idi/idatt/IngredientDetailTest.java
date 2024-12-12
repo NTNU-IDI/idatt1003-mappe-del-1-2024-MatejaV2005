@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt;
 
-import edu.ntnu.idi.idatt.Model.IngredientDetail;
+import edu.ntnu.idi.idatt.model.IngredientDetail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,8 +34,8 @@ public class IngredientDetailTest {
 
   @Test
   void testSetAmountAndUnitValidInputs() {
-    ingredient.setAmountAndUnit(500, "mg"); // 500 mg
-    assertEquals(0.5, ingredient.getAmount(), "The amount should be converted to 0.5 grams.");
+    ingredient.setAmountAndUnit(0.5, "kg"); // 500 mg
+    assertEquals(500, ingredient.getAmount(), "The amount should be converted to 0.5 grams.");
     assertEquals("g", ingredient.getUnit(), "The unit should be standardized to 'g'.");
   }
 

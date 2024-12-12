@@ -1,7 +1,7 @@
-package edu.ntnu.idi.idatt.Model;
+package edu.ntnu.idi.idatt.model;
 
-import edu.ntnu.idi.idatt.Utils.ExceptionHandling;
-import edu.ntnu.idi.idatt.Utils.UnitConverter;
+import edu.ntnu.idi.idatt.utils.ExceptionHandling;
+import edu.ntnu.idi.idatt.utils.UnitConverter;
 
 /**
  * Represents detailed information about an ingredient, including its amount and unit.

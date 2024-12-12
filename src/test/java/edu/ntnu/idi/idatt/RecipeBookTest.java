@@ -1,10 +1,10 @@
 package edu.ntnu.idi.idatt;
 
-import edu.ntnu.idi.idatt.Model.FoodStorage;
-import edu.ntnu.idi.idatt.Model.Grocery;
-import edu.ntnu.idi.idatt.Model.IngredientDetail;
-import edu.ntnu.idi.idatt.Model.Recipe;
-import edu.ntnu.idi.idatt.Model.RecipeBook;
+import edu.ntnu.idi.idatt.model.FoodStorage;
+import edu.ntnu.idi.idatt.model.Grocery;
+import edu.ntnu.idi.idatt.model.IngredientDetail;
+import edu.ntnu.idi.idatt.model.Recipe;
+import edu.ntnu.idi.idatt.model.RecipeBook;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;

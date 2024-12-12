@@ -1,7 +1,7 @@
-package edu.ntnu.idi.idatt.Model;
+package edu.ntnu.idi.idatt.model;
 
-import edu.ntnu.idi.idatt.Utils.UnitConverter;
-import edu.ntnu.idi.idatt.Utils.ExceptionHandling;
+import edu.ntnu.idi.idatt.utils.ExceptionHandling;
+import edu.ntnu.idi.idatt.utils.UnitConverter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -10,13 +10,14 @@ import java.time.format.DateTimeFormatter;
  * Provides methods to manipulate and retrieve the details of the grocery item.
  * Includes functionality to check if the grocery is expired and to format the item as a string.
  */
+
 public class Grocery {
 
   private final String name;
   private double amount;
   private final double price;
   private final String unit;
-  private final LocalDate expiryDate; // Immutable field to ensure safety
+  private final LocalDate expiryDate;
 
   /**
    * Constructs a new Grocery object with the specified details.
@@ -28,6 +29,7 @@ public class Grocery {
    * @param expiryDate the expiry date of the grocery item
    * @throws IllegalArgumentException if any of the parameters are invalid
    */
+
   public Grocery(String name, double price, double amount, String unit, LocalDate expiryDate) {
     this.name = validateAndSetName(name);
     this.price = validateAndSetPrice(price);
@@ -67,6 +69,7 @@ public class Grocery {
    * @return the validated name
    * @throws IllegalArgumentException if the name is invalid
    */
+
   private String validateAndSetName(String name) {
     ExceptionHandling.validateName(name); // Validates name
     return name.toLowerCase(); // Returns validated name
@@ -79,6 +82,7 @@ public class Grocery {
    * @return the validated price
    * @throws IllegalArgumentException if the price is invalid
    */
+
   public double validateAndSetPrice(double price) {
     ExceptionHandling.validatePrice(price); // Validates price
     return price; // Returns validated price
@@ -91,6 +95,7 @@ public class Grocery {
    * @return the standardized unit after validation
    * @throws IllegalArgumentException if the unit is invalid
    */
+
   private String validateAndSetUnit(String unit) {
     ExceptionHandling.validateUnit(unit); // Validates unit
     return UnitConverter.getStandardUnit(unit); // Converts to a standard unit
@@ -102,12 +107,15 @@ public class Grocery {
    *
    * @param amount the amount of the grocery to validate and set
    * @param unit the unit of the amount to assist in conversion
-   * @return the standardized amount after validation
    * @throws IllegalArgumentException if the amount is invalid
    */
+
   public void validateAndSetAmount(double amount, String unit) {
-    ExceptionHandling.validateAmount(amount); // Validates amount
-    this.amount = UnitConverter.convertToStandardUnit(amount, unit); // Converts to a standardized amount
+    // Validates amount
+    ExceptionHandling.validateAmount(amount);
+
+    // Converts to a standardized amount
+    this.amount = UnitConverter.convertToStandardUnit(amount, unit);
   }
 
   /**
@@ -117,6 +125,7 @@ public class Grocery {
    * @return the validated expiry date
    * @throws IllegalArgumentException if the expiry date is invalid
    */
+
   private LocalDate validateAndSetExpiryDate(LocalDate expiryDate) {
     ExceptionHandling.validateExpiryDate(expiryDate); // Validates expiry date
     return expiryDate; // Returns validated expiry date
@@ -129,6 +138,7 @@ public class Grocery {
    *
    * @return {@code true} if the grocery item is expired, otherwise {@code false}
    */
+
   public boolean isExpired() {
     LocalDate currentDate = LocalDate.now(); // Gets the current date
     return currentDate.isAfter(expiryDate); // Returns true if expired
@@ -140,6 +150,7 @@ public class Grocery {
    * @param amountToIncrease the amount to increase the grocery item's amount by
    * @throws IllegalArgumentException if the increase amount is invalid
    */
+
   public void increaseAmount(double amountToIncrease) {
     ExceptionHandling.validateAmountIncrease(amountToIncrease);
     this.amount += amountToIncrease; // Adds to the new amount
@@ -151,19 +162,23 @@ public class Grocery {
    * @param amountToDecrease the amount to decrease the grocery item's amount by
    * @throws IllegalArgumentException if the decrease amount is invalid
    */
+
   public void decreaseAmount(double amountToDecrease) {
     ExceptionHandling.validateAmountDecrease(this, amountToDecrease);
     this.amount -= amountToDecrease;
   }
 
   /**
-   * Returns a string representation of the grocery item, including its name, price, amount, unit, and expiry date.
+   * Returns a string representation of the grocery item,
+   * including its name, price, amount, unit, and expiry date.
    *
    * @return a formatted string representation of the grocery item
    */
+
   @Override
   public String toString() {
     DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    return this.name + ", " + this.price + "kr, " + this.amount + " " + this.unit + ", " + dateFormat.format(expiryDate);
+    return this.name + ", " + this.price + "kr, "
+        + this.amount + " " + this.unit + ", " + dateFormat.format(expiryDate);
   }
 }

@@ -1,22 +1,23 @@
-package edu.ntnu.idi.idatt.Interface;
+package edu.ntnu.idi.idatt.interaction;
 
-import edu.ntnu.idi.idatt.Model.FoodStorage;
-import edu.ntnu.idi.idatt.Model.Grocery;
-import edu.ntnu.idi.idatt.Model.IngredientDetail;
-import edu.ntnu.idi.idatt.Model.Recipe;
-import edu.ntnu.idi.idatt.Model.RecipeBook;
-import edu.ntnu.idi.idatt.Utils.InputValidation;
+import edu.ntnu.idi.idatt.model.FoodStorage;
+import edu.ntnu.idi.idatt.model.Grocery;
+import edu.ntnu.idi.idatt.model.IngredientDetail;
+import edu.ntnu.idi.idatt.model.Recipe;
+import edu.ntnu.idi.idatt.model.RecipeBook;
+import edu.ntnu.idi.idatt.utils.InputValidation;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+
 /**
  * User interface for the Grocery application.
  * Provides a menu-driven interface for interacting with properties.
  */
-public class AppUI {
+public class AppInterface {
 
   private static final int ADD_GROCERY = 1;
   private static final int REMOVE_GROCERY = 2;
@@ -33,18 +34,18 @@ public class AppUI {
   private static final int EXIT = 0;
 
   private final Scanner scanner = new Scanner(System.in);
-  private FoodStorage mainStorage = null; // Initialize FoodStorage instance globally
-  private RecipeBook recipeBook = null; // Initialize FoodStorage instance globally
+  private FoodStorage mainStorage; // Initialize FoodStorage instance globally
+  private RecipeBook recipeBook; // Initialize FoodStorage instance globally
 
   /**
    * Presents the menu for the user and awaits input from the user.
    * The menu choice selected by the user is returned.
    *
    * @return the menu choice as a positive number starting from 1.
-   *         If 0 is returned, the user has entered an invalid value.
+   *         If 0 is returned, the program exits
    */
   private int showMenu() {
-    System.out.println("\n***** FOODWASTE APPLICTAION VERSION 0.1 *****\n");
+    System.out.println("\n***** FOODWASTE APPLICTAION VERSION 1.0 *****\n");
     System.out.println("1. Add grocery");
     System.out.println("2. Remove grocery");
     System.out.println("3. Return a sorted storage (Alphabetically)");
@@ -59,9 +60,51 @@ public class AppUI {
     System.out.println("12. Check for recipes you can make with current storage:");
     System.out.println("0. Quit");
 
-    int menuChoice = InputValidation.getValidInt("\nPlease enter a number between 1 and 12: ");
-    return menuChoice;
+    return InputValidation.getValidInt("\nPlease enter a number between 1 and 12: ");
   }
+
+  /**
+   * Starts the main application loop for the program.
+   *
+   * <p>This method initializes the application and continuously displays a menu
+   * for the user until they choose to exit. The menu provides options for managing
+   * groceries, viewing storage, and working with recipes. The user's input is validated,
+   * and appropriate methods are called based on their selection.
+   * </p>
+   *
+   * <p>Menu options include:</p>
+   * <ul>
+   *   <li>Adding groceries to the storage</li>
+   *   <li>Removing groceries or specific amounts</li>
+   *   <li>Viewing sorted storage</li>
+   *   <li>Searching for groceries by name</li>
+   *   <li>Finding groceries based on expiry dates</li>
+   *   <li>Viewing total value of groceries</li>
+   *   <li>Managing expired groceries</li>
+   *   <li>Adding recipes and checking which recipes can be made</li>
+   *   <li>Exiting the program</li>
+   * </ul>
+   *
+   * <p>Input validation ensures that the user cannot crash the program by entering invalid inputs.
+   * Robust exception handling provides informative error messages and allows the user to retry
+   * invalid opertaions.</p>
+   *
+   * <p>Once the user selects the exit option, the application loop ends, and the program terminates
+   * gracefully with a success message.</p>
+   *
+   * @see #addGroceryToStorage()
+   * @see #removeAmountOfGroceryFromStorage()
+   * @see #sortedStorage()
+   * @see #findGroceryInStorage()
+   * @see #bestBeforeExpiryDate()
+   * @see #totalValueOfGroceries()
+   * @see #viewExpiredGroceries()
+   * @see #totalValueOfExpiredGroceries()
+   * @see #showStorage()
+   * @see #createRecipe()
+   * @see #checkForSpecificRecipe()
+   * @see #checkForAllAvailableRecipes()
+   */
 
   public void start() {
     boolean finished = false;
@@ -70,65 +113,71 @@ public class AppUI {
     while (!finished) {
       int menuChoice = this.showMenu();
       switch (menuChoice) {
-        case ADD_GROCERY -> {
+
+        case ADD_GROCERY ->
           addGroceryToStorage();
-        }
 
-        case REMOVE_GROCERY -> {
-          removeAmountOfGroceryFromStorage(); // MISSING EXCEPTION HANDLING REMEMBER THAT CUZ!!!!
-        }
 
-        case GROCERIES_SORTED -> {
+        case REMOVE_GROCERY ->
+          removeAmountOfGroceryFromStorage();
+
+
+        case GROCERIES_SORTED ->
           sortedStorage();
-        }
 
-        case FIND_GROCERY_IN_STORAGE -> {
+
+        case FIND_GROCERY_IN_STORAGE ->
           findGroceryInStorage();
-        }
 
-        case BEST_BEFORE_EXPIRY_DATE -> {
+
+        case BEST_BEFORE_EXPIRY_DATE ->
           bestBeforeExpiryDate();
-        }
 
-        case TOTAL_VALUE_OF_GROCERIES_IN_STORAGE -> {
+
+        case TOTAL_VALUE_OF_GROCERIES_IN_STORAGE ->
           totalValueOfGroceries();
-        }
 
-        case MOVE_AND_VIEW_EXPIRED_GROCERIES -> {
+
+        case MOVE_AND_VIEW_EXPIRED_GROCERIES ->
           viewExpiredGroceries();
-        }
 
-        case TOTAL_VALUE_OF_EXPIRED_GROCERIES -> {
+
+        case TOTAL_VALUE_OF_EXPIRED_GROCERIES ->
           totalValueOfExpiredGroceries();
-        }
 
-        case LIST_ALL_GROCERIES -> {
+
+        case LIST_ALL_GROCERIES ->
           showStorage();
-        }
 
-        case REGISTER_RECIPE -> {
+
+        case REGISTER_RECIPE ->
           createRecipe();
-        }
 
-        case CHECK_FOR_RECIPE -> {
+
+        case CHECK_FOR_RECIPE ->
           checkForSpecificRecipe();
-        }
 
-        case CHECK_AVAILABLE_RECIPES -> {
+
+        case CHECK_AVAILABLE_RECIPES ->
           checkForAllAvailableRecipes();
-        }
+
 
         case EXIT -> {
           System.out.println("Program exited succesfully");
           finished = true;
         }
+
+        default ->
+          System.out.println("invalid input, try again");
+
       }
     }
   }
 
   private void addGroceryToStorage() {
     System.out.println("Enter the following: ");
-    System.out.println("SIDENOTE: default display of amount is in g (grams) for dry units and l (litres) for liquid units");
+    System.out.println("SIDENOTE: default display of amount is in "
+        + "g (grams) for dry units and l (litres) for liquid units");
 
     try {
       String groceryName = InputValidation.getValidString("\nPlease enter Grocery name: ");
@@ -137,12 +186,14 @@ public class AppUI {
 
       double groceryAmount = InputValidation.getValidDouble("Amount of grocery: ", false);
 
-      String groceryUnit = InputValidation.getValidUnit("Corresponding Unit: ");
+      String groceryUnit = InputValidation.getValidUnit("Corresponding Unit (g, kg, l, ml, dl): ");
 
-      LocalDate groceryExpiryDate = InputValidation.getValidDate("Expiry Date: ");
+      LocalDate groceryExpiryDate = InputValidation.getValidDate("Expiry Date (dd-mm-YYYY): ");
 
       // Create and register the grocery
-      Grocery registeredGrocery = new Grocery(groceryName, groceryPrice, groceryAmount, groceryUnit, groceryExpiryDate);
+      Grocery registeredGrocery = new Grocery(
+          groceryName, groceryPrice, groceryAmount, groceryUnit, groceryExpiryDate);
+
       mainStorage.registerToStorage(registeredGrocery);
 
       // Filter and remove expired groceries from storage
@@ -163,9 +214,17 @@ public class AppUI {
   }
 
   private void removeAmountOfGroceryFromStorage() {
-    String groceryToRemove = InputValidation.getValidItemToRemove("\nPlease enter Grocery name: ", mainStorage.sortGroceries()); // use sort groceries here to return a Map<String, List<Grocery>>
-    String desiredUnit = InputValidation.getValidCompatibleUnit("\nPlease enter the desired unit for removal: ", groceryToRemove, mainStorage.sortGroceries());
-    double amountToRemove = InputValidation.getValidAmountToRemove("\nPlease enter amount to remove: ", mainStorage.sortGroceries(), groceryToRemove, desiredUnit);
+    // use sortGroceries here to return a Map<String, List<Grocery>>
+    String groceryToRemove = InputValidation.getValidItemToRemove(
+        "\nPlease enter Grocery name: ", mainStorage.sortGroceries());
+
+    String desiredUnit = InputValidation.getValidCompatibleUnit(
+        "\nPlease enter the desired unit for removal: ",
+        groceryToRemove, mainStorage.sortGroceries());
+
+    double amountToRemove = InputValidation.getValidAmountToRemove(
+        "\nPlease enter amount to remove: ",
+        mainStorage.sortGroceries(), groceryToRemove, desiredUnit);
 
 
     mainStorage.removeAmountFromStorage(groceryToRemove, amountToRemove, desiredUnit);
@@ -176,18 +235,21 @@ public class AppUI {
   }
 
   private void findGroceryInStorage() {
-    String groceryToFind = InputValidation.getValidString("Please enter the name of the grocery:\n");
+    String groceryToFind = InputValidation.getValidString(
+        "Please enter the name of the grocery:\n");
     mainStorage.findInStorage(groceryToFind, false);
     mainStorage.findInStorage(groceryToFind, true);
   }
 
   private void bestBeforeExpiryDate() {
-    LocalDate bestBeforeDate = InputValidation.getValidDate("Please enter a date you want to check for (dd-mm-yyyy)");
+    LocalDate bestBeforeDate = InputValidation.getValidDate(
+        "Please enter a date you want to check for (dd-mm-yyyy)");
     System.out.println(mainStorage.bestBefore(bestBeforeDate));
   }
 
   private void totalValueOfGroceries() {
-    System.out.println("The total monetary value of all groceries: \n" + mainStorage.totalValueOfGroceries() + "kr");
+    System.out.println("The total monetary value of all groceries: \n"
+        + mainStorage.totalValueOfGroceries() + "kr");
   }
 
   private void viewExpiredGroceries() {
@@ -195,7 +257,8 @@ public class AppUI {
   }
 
   private void totalValueOfExpiredGroceries() {
-    System.out.println("Total monetary value of expired groceries in storage: \n" + mainStorage.totalValueOfExpiredGroceries() + "kr");
+    System.out.println("Total monetary value of expired groceries in storage: \n"
+        + mainStorage.totalValueOfExpiredGroceries() + "kr");
   }
 
   private void showStorage() {
@@ -216,7 +279,10 @@ public class AppUI {
     while (!finishedAdding) {
       String ingredientName = InputValidation.getValidString("Insert ingredient name: ");
       double ingredientAmount = InputValidation.getValidDouble("Insert amount: ", false);
-      String ingredientUnit = InputValidation.getValidUnit("Insert unit (e.g., g, kg, l): ");
+
+      String ingredientUnit = InputValidation.getValidUnit(
+          "Insert one of the following units (g, kg, l, ml, dl): "
+      );
 
       recipeIngredients.put(ingredientName, new IngredientDetail(ingredientAmount, ingredientUnit));
 
@@ -237,27 +303,50 @@ public class AppUI {
 
     try {
       recipeBook.addRecipe(newRecipe);
-      System.out.println("Recipe \"" + recipeName + "\" has been successfully added to the RecipeBook!");
+      System.out.println("Recipe \""
+          + recipeName + "\" has been successfully added to the RecipeBook!");
     } catch (IllegalArgumentException e) {
       System.out.println("Error: " + e.getMessage());
     }
   }
 
+
   private void checkForSpecificRecipe() {
-    Recipe recipe = InputValidation.getValidRecipe("Enter the name of the recipe you want to check:", recipeBook);
+    boolean finishedChecking = false;
 
-    // Link the FoodStorage to the recipe
-    recipe.setStorage(mainStorage);
+    // loops until user is finished checking
+    while (!finishedChecking) {
+      Recipe recipe = InputValidation.getValidRecipe(
+          "Enter the name of the recipe you want to check:", recipeBook);
 
-    if (recipe.canMakeRecipe()) {
-      System.out.println("Here is the recipe you requested:");
-      System.out.println(recipe);
-    } else {
-      System.out.println("You don't have enough ingredients to make: " + recipe.getNameOfRecipe() + "\n");
-      System.out.println("Missing ingredients:");
-      recipe.getMissingIngredients();
+      if (recipe == null) {
+        System.out.println("Try another? (Y/N)");
+
+        try {
+          String response = InputValidation.getValidAnswer(scanner.nextLine().trim().toLowerCase());
+          finishedChecking = response.equals("n");
+        } catch (IllegalArgumentException e) {
+          System.out.println(e.getMessage());
+        }
+      } else {
+        // Link the FoodStorage to the recipe
+        recipe.setStorage(mainStorage);
+
+        if (recipe.canMakeRecipe()) {
+          System.out.println("Here is the recipe you requested:");
+          System.out.println(recipe);
+        } else {
+          System.out.println(
+              "You don't have enough ingredients to make: " + recipe.getNameOfRecipe() + "\n");
+          System.out.println("Missing ingredients:");
+          recipe.getMissingIngredients();
+        }
+      }
     }
   }
+
+
+
 
   private void checkForAllAvailableRecipes() {
     if (recipeBook.getAvailableRecipes(mainStorage).isEmpty()) {
@@ -299,7 +388,7 @@ public class AppUI {
         new Grocery("Bread", 25.0, 1000.0, "g", LocalDate.of(2024, 12, 1)),
 
         // Eggs
-        new Grocery("Eggs", 5.0, 12.0, "stk", LocalDate.of(2024, 12, 15)), // Quantity in number of eggs, no change needed
+        new Grocery("Eggs", 5.0, 12.0, "stk", LocalDate.of(2024, 12, 15)),
         new Grocery("Eggs", 5.0, 6.0, "stk", LocalDate.of(2024, 12, 5)),
 
         // Chicken
@@ -363,7 +452,7 @@ public class AppUI {
         spaghettiIngredients
     );
 
-    recipeBook.addRecipe(spaghetti); // Add recipe to RecipeBook
+    recipeBook.addRecipe(spaghetti);
 
     Map<String, IngredientDetail> pancakeIngredients = new HashMap<>();
     pancakeIngredients.put("Flour", new IngredientDetail(200, "g"));

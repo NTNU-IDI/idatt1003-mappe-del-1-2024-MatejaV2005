@@ -6,28 +6,61 @@ This file uses Mark Down syntax. For more information see [here](https://www.mar
 
 [//]: # (TODO: Fill inn your name and student ID)
 
-STUDENT NAME = "Your name"  
-STUDENT ID = "Your ID"
+STUDENT NAME = Mateja Vasic  
+STUDENT ID = 10058
 
 ## Project description
-
-[//]: # (TODO: Write a short description of your project/product here.)
+The FoodWaste Application is a text-based program designed to reduce household food waste by improving grocery and recipe management.
 
 ## Project structure
 
-[//]: # (TODO: Describe the structure of your project here. How have you used packages in your structure. Where are all sourcefiles stored. Where are all JUnit-test classes stored. etc.)
+#### Source Code
+Located in `src/main/java`, organized into packages:
+- **controller**: Contains the `Main` class, the entry point of the application.
+- **interaction**: Includes `AppInterface` for managing user interaction.
+- **model**: Core classes such as `FoodStorage`, `Grocery`, `IngredientDetail`, `Recipe`, and `RecipeBook`.
+- **utils**: Utility classes like `ExceptionHandling`, `InputValidation`, and `UnitConverter`.
+
+#### Resources
+- `src/main/resources` stores configuration or non-code assets.
+
+#### Testing
+- Test classes are in `src/test/java`, mirroring the main package structure for easy traceability.
+
+#### Prerequisitues
+Java JDK version 21
+
+#### Build Configuration
+- Maven is used to manage dependencies and builds via the `pom.xml` file in the root directory.
 
 ## Link to repository
+https://github.com/NTNU-IDI/idatt1003-mappe-del-1-2024-MatejaV2005
 
 [//]: # (TODO: Include a link to your GitHub repository here.)
 
-## How to run the project
+## How to Run the Project
 
-[//]: # (TODO: Describe how to run your project here. What is the main class? What is the main method?
-What is the input and output of the program? What is the expected behaviour of the program?)
+To run the project, ensure you are using at least **Java JDK version 21** ([Download JDK 21 here](https://www.oracle.com/java/technologies/downloads/)).
+
+1. Open a terminal and navigate to the root directory of the project:
+
+   ```bash
+   cd /path/to/my/project/
+
+   1) PASTE THESE IN THE FOLLOWOING ORDER    
+   javac -d target src/main/java/edu/ntnu/idi/idatt/controller/*.java \
+    src/main/java/edu/ntnu/idi/idatt/interaction/*.java \
+    src/main/java/edu/ntnu/idi/idatt/model/*.java \
+    src/main/java/edu/ntnu/idi/idatt/utils/*.java
+
+   2) 
+   java -cp target edu.ntnu.idi.idatt.controller.Main
+
 
 ## How to run the tests
-
+Open the test class you would like to run from the `src/test/java/edu/ntnu/idi/idatt/` directory.
+run the file.
+OR run all the tests by right-clicking on the `src/test/java/` and press "run all test"
 [//]: # (TODO: Describe how to run the tests here.)
 
 ## References
